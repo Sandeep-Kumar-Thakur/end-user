@@ -7,10 +7,12 @@ import 'package:bala_ji_mart/utility/common_decoration.dart';
 import 'package:bala_ji_mart/utility/helper_widgets.dart';
 import 'package:bala_ji_mart/utility/my_text_field.dart';
 import 'package:bala_ji_mart/utility/navigator_helper.dart';
+import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:url_launcher/url_launcher.dart';
 import '../../controller/user_controller.dart';
+import '../../model/banner_model.dart';
 import '../../model/category_model.dart';
 import '../../utility/my_drawer.dart';
 
@@ -34,9 +36,11 @@ class _HomeScreenState extends State<HomeScreen>
   List<ProductDetailsModel> productListAll = [];
   List<ProductDetailsModel> productListSearch = [];
  bool isSearch  =  false;
+  List<BannerModel> bannerList = [];
 
   @override
   void initState() {
+   getBanner();
     controller = AnimationController(
         duration: const Duration(milliseconds: 300), vsync: this);
     animation = Tween<double>(begin: 0.0, end: 1.0).animate(controller);
@@ -48,11 +52,14 @@ class _HomeScreenState extends State<HomeScreen>
     super.initState();
   }
 
+  getBanner()async{
+    bannerList =await FirebaseRealTimeStorage().getAllBanner();
+  }
+
   @override
   Widget build(BuildContext context) {
     LocalStorage().readUserCart();
     return Scaffold(
-
       key: UserController.key,
       drawer: MyDrawer(),
       bottomNavigationBar: _bottomAppBar(),
@@ -92,62 +99,78 @@ class _HomeScreenState extends State<HomeScreen>
         }
       }
 
-      return Column(
-        children: [
-          Expanded(
-            child: SingleChildScrollView(
-              child: GridView.builder(
-                padding: EdgeInsets.only(bottom: 10),
-                shrinkWrap: true,
-                physics: NeverScrollableScrollPhysics(),
-                itemCount: categoryList.length,
-                gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                  crossAxisCount: 2,
-                  mainAxisExtent: 210,
-                ),
-                itemBuilder: (BuildContext context, int index) {
-                  return InkWell(
-                    onTap: () {
-                      goTo(
-                          className: ItemsScreen(
-                            productList: categoryList[index].productList ?? [],
-                          ));
-                    },
-                    child: Container(
-                        padding: EdgeInsets.all(15),
-                        decoration: BoxDecoration(
-                          border:
-                          Border.all(color: Colors.grey.withOpacity(.05)),
-                        ),
-                        child: Column(
-                          children: [
-                            Expanded(
-                              flex: 5,
-                              child: Container(
-                                width: double.infinity,
-                                decoration: BoxDecoration(
-                                    boxShadow: greyShadow,
-                                    borderRadius: BorderRadius.circular(100)),
-                                child: ClipRRect(
-                                    borderRadius: BorderRadius.circular(100),
-                                    child: myImage(
-                                        source: categoryList[index].image ?? "",
-                                        fromUrl: true)),
-                              ),
-                            ),
-                            smallSpace(),
-                            Text(
-                              categoryList[index].name?.capitalize ?? "",
-                              style: CommonDecoration.listItem,
-                            )
-                          ],
-                        )),
-                  );
-                },
-              ),
+      return SingleChildScrollView(
+        child: Column(
+          children: [
+            Container(
+              height: 140,
+              width: double.infinity,
+              child: CarouselSlider.builder(itemCount: bannerList.length, itemBuilder: (context,i,j){
+                return InkWell(
+                  onTap: (){
+                    goTo(className: ItemsScreen(productList: bannerList[i].productList!));
+                  },
+                  child: Container(
+                    width: double.infinity,
+                    child: myImage(source: bannerList[i].image??"", fromUrl: true),
+                  ),
+                );
+              }, options: CarouselOptions(
+                viewportFraction: 1,
+                autoPlay: true
+              )),
             ),
-          ),
-        ],
+            GridView.builder(
+              padding: EdgeInsets.only(bottom: 10),
+              shrinkWrap: true,
+              physics: NeverScrollableScrollPhysics(),
+              itemCount: categoryList.length,
+              gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                crossAxisCount: 2,
+                mainAxisExtent: 210,
+              ),
+              itemBuilder: (BuildContext context, int index) {
+                return InkWell(
+                  onTap: () {
+                    goTo(
+                        className: ItemsScreen(
+                          productList: categoryList[index].productList ?? [],
+                        ));
+                  },
+                  child: Container(
+                      padding: EdgeInsets.all(15),
+                      decoration: BoxDecoration(
+                        border:
+                        Border.all(color: Colors.grey.withOpacity(.05)),
+                      ),
+                      child: Column(
+                        children: [
+                          Expanded(
+                            flex: 5,
+                            child: Container(
+                              width: double.infinity,
+                              decoration: BoxDecoration(
+                                  boxShadow: greyShadow,
+                                  borderRadius: BorderRadius.circular(100)),
+                              child: ClipRRect(
+                                  borderRadius: BorderRadius.circular(100),
+                                  child: myImage(
+                                      source: categoryList[index].image ?? "",
+                                      fromUrl: true)),
+                            ),
+                          ),
+                          smallSpace(),
+                          Text(
+                            categoryList[index].name?.capitalize ?? "",
+                            style: CommonDecoration.listItem,
+                          )
+                        ],
+                      )),
+                );
+              },
+            ),
+          ],
+        ),
       );
     });
   }

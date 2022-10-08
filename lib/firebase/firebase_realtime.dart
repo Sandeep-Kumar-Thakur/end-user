@@ -11,6 +11,7 @@ import 'package:firebase_database/firebase_database.dart';
 import 'package:get_storage/get_storage.dart';
 import '../constants/key_contants.dart';
 import '../controller/user_controller.dart';
+import '../model/banner_model.dart';
 import '../model/category_model.dart';
 import '../model/product_model.dart';
 import '../utility/helper_widgets.dart';
@@ -18,6 +19,22 @@ import 'package:http/http.dart' as http;
 
 class FirebaseRealTimeStorage {
   final fireBaseRealTime = FirebaseDatabase.instance;
+
+
+  ///-----------banner ------------------
+  Future getAllBanner()async{
+    List<BannerModel> bannerList = [];
+    var data = await fireBaseRealTime.ref(KeyConstants.banner).get();
+    if(data.value==null){
+      return [];
+    }
+    Map tempData = jsonDecode(jsonEncode(data.value));
+    tempData.forEach((key, value) {
+      BannerModel bannerModel = BannerModel.fromJson(value);
+      bannerList.add(bannerModel);
+    });
+   return bannerList;
+  }
 
   ///-----------add cart-----------------------------
 
@@ -47,7 +64,9 @@ class FirebaseRealTimeStorage {
    hideLoader();
    goTo(className: OrderHistory(cartList: cartList));
     }catch(e){
-      showMessage(msg: e.toString());
+      hideLoader();
+
+      showMessage(msg: "No Order History");
     }
   }
 
@@ -79,7 +98,7 @@ class FirebaseRealTimeStorage {
         var body = {
           "to": "${tempData.values.first}",
           "notification": {
-            "title": "Order Received",
+            "title": "Order Received From ${storeCartModel.userModel?.name??""}",
             "body": "Amount   ₹ ${storeCartModel.totalAmount.toString()}",
             "mutable_content": true,
             "sound": "Tri-tone"

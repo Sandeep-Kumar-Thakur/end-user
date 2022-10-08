@@ -5,6 +5,7 @@ import 'package:bala_ji_mart/constants/color_constants.dart';
 import 'package:fancy_shimmer_image/fancy_shimmer_image.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 import '../controller/user_controller.dart';
 import '../screens/cart.dart';
@@ -26,11 +27,12 @@ myLog({required String label, required String value}) {
 
 showMessage({required String msg}) {
   Get.showSnackbar(GetSnackBar(
+    icon: Image.asset("assets/icons/balaji_new.png"),
     margin: EdgeInsets.symmetric(horizontal: 5, vertical: 5),
     borderRadius: 10,
     title: "Bala Ji Mart",
     snackPosition: SnackPosition.TOP,
-    backgroundColor: Colors.blue,
+    backgroundColor: ColorConstants.themeColor.withOpacity(.7),
     duration: Duration(seconds: 3),
     message: msg,
   ));
@@ -44,63 +46,93 @@ Widget commonHeader({required String title,bool? showDrawer,bool? showCart}) {
         padding: EdgeInsets.only(top: 15,bottom: 15,left: 15,right: 5),
         color: ColorConstants.themeColor,
         child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+         
           children: [
-            showDrawer==true?
-            InkWell(
-              onTap: (){
-                UserController.key.currentState!.openDrawer();
-              },
-              child: const Icon(
-                Icons.menu,
-                color: Colors.white,
+            Expanded(
+              flex: 1,
+              child: Align(
+                alignment: Alignment.centerLeft,
+                child: showDrawer==true?
+                InkWell(
+                  onTap: (){
+                    UserController.key.currentState!.openDrawer();
+                  },
+                  child: const Icon(
+                    Icons.menu,
+                    color: Colors.white,
+                  ),
+                ):SizedBox(),
               ),
-            ):SizedBox(),
-            Align(
-                alignment: Alignment.center,
-                child: Text(
-                  title,
-                  style: CommonDecoration.headerDecoration
-                      .copyWith(color: Colors.white),
-                )),
-          showCart==true?  InkWell(
-                onTap: () {
-                  if(UserController().stateController.cartCount.value == 0){
-                    showMessage(msg: "Cart is empty");
-                    return;
-                  }
-                  goTo(className: CartScreen());
-                },
-                child: Stack(
-                  alignment: Alignment.topRight,
-                  children: [
-                    Padding(
-                      padding: EdgeInsets.only(right: 10,top: 5),
-                      child: Icon(
-                        Icons.shopping_cart_outlined,
-                        color: Colors.white,
-                      ),
-                    ),
-                   Container(
-                     height: 20,
-                     width: 20,
-                     alignment: Alignment.center,
-                     decoration: BoxDecoration(
-                       border: Border.all(
-                         color: Colors.white,
-                         width: 1
-                       ),
-                       color: ColorConstants.themeColor,
-                       borderRadius: BorderRadius.circular(10)
-                     ),
-                     child: Text(UserController().stateController.cartCount.toString(),style: TextStyle(
-                       fontSize: 10,
-                       color: Colors.white,
-                       fontWeight: FontWeight.w600
-                     ),),
-                   )
-                  ],
-                )):SizedBox()
+            ),
+            Expanded(
+              flex: 2,
+              child: Align(
+                  alignment: Alignment.center,
+                  child: Text(
+                    title,
+                    style: CommonDecoration.headerDecoration
+                        .copyWith(color: Colors.white),
+                  )),
+            ),
+          Expanded(
+            flex: 1,
+            child: Align(
+              alignment: Alignment.centerRight,
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: [
+                  InkWell(
+                      onTap: ()async{
+                        Uri url  = Uri.parse("whatsapp://send?phone=" + "+918288814320" + "&text=" + "Hello sir");
+                        if (!await launchUrl(url)) {
+                          throw 'Could not launch';
+                        }
+                      },
+                      child: Icon(Icons.whatsapp,color: Colors.white,)),
+                  SizedBox(width: 5,),
+                  showCart==true?  InkWell(
+                      onTap: () {
+                        if(UserController().stateController.cartCount.value == 0){
+                          showMessage(msg: "Cart is empty");
+                          return;
+                        }
+                        goTo(className: CartScreen());
+                      },
+                      child: Stack(
+                        alignment: Alignment.topRight,
+                        children: [
+                          Padding(
+                            padding: EdgeInsets.only(right: 10,top: 5),
+                            child: Icon(
+                              Icons.shopping_cart_outlined,
+                              color: Colors.white,
+                            ),
+                          ),
+                          Container(
+                            height: 20,
+                            width: 20,
+                            alignment: Alignment.center,
+                            decoration: BoxDecoration(
+                                border: Border.all(
+                                    color: Colors.white,
+                                    width: 1
+                                ),
+                                color: ColorConstants.themeColor,
+                                borderRadius: BorderRadius.circular(10)
+                            ),
+                            child: Text(UserController().stateController.cartCount.toString(),style: TextStyle(
+                                fontSize: 10,
+                                color: Colors.white,
+                                fontWeight: FontWeight.w600
+                            ),),
+                          )
+                        ],
+                      )):SizedBox()
+                ],
+              ),
+            ),
+          ),
+
           ],
         ),
       );

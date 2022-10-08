@@ -23,10 +23,7 @@ class ItemsScreen extends StatelessWidget {
             commonHeader(title: "Product List"),
             Expanded(
               child: myPadding(
-                  child: Column(
-                children: [
-                  
-                  SingleChildScrollView(
+                  child: SingleChildScrollView(
                     child: GridView.builder(
                       padding: EdgeInsets.symmetric(vertical: 10),
                       shrinkWrap: true,
@@ -98,9 +95,7 @@ class ItemsScreen extends StatelessWidget {
                         );
                       },
                     ),
-                  ),
-                ],
-              )),
+                  )),
             ),
           ],
         ),

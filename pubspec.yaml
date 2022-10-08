@@ -47,6 +47,7 @@ dependencies:
   url_launcher:
   flutter_launcher_icons:
   http:
+  carousel_slider:
 
 
 dev_dependencies:

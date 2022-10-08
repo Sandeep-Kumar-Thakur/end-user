@@ -1,7 +1,10 @@
+import 'dart:async';
+
 import 'package:bala_ji_mart/firebase/firebase_realtime.dart';
 import 'package:bala_ji_mart/model/store_cart_model.dart';
+import 'package:bala_ji_mart/screens/account/personal_information.dart';
 import 'package:bala_ji_mart/utility/helper_widgets.dart';
-import 'package:firebase_core/firebase_core.dart';
+import 'package:bala_ji_mart/utility/my_button.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -21,7 +24,6 @@ class _CartScreenState extends State<CartScreen> {
 
   @override
   void dispose() {
-
     // TODO: implement dispose
     super.dispose();
   }
@@ -31,14 +33,15 @@ class _CartScreenState extends State<CartScreen> {
     storeCartModel.totalAmount = 0;
     storeCartModel.deliveryCharge = 0;
     storeCartModel.userModel = LocalStorage().readUserModel();
-    for(int i=0;i<storeCartModel.cartItem!.length;i++){
-      storeCartModel.totalAmount = storeCartModel.totalAmount+int.parse(storeCartModel.cartItem![i].itemTotal.toString());
-      storeCartModel.deliveryCharge = storeCartModel.deliveryCharge + (int.parse(storeCartModel.cartItem![i].itemCount.toString())*6);
+    for (int i = 0; i < storeCartModel.cartItem!.length; i++) {
+      storeCartModel.totalAmount = storeCartModel.totalAmount +
+          int.parse(storeCartModel.cartItem![i].itemTotal.toString());
+      storeCartModel.deliveryCharge = storeCartModel.deliveryCharge +
+          (int.parse(storeCartModel.cartItem![i].itemCount.toString()) * 6);
     }
 
-     // LocalStorage().writeUserCart(storeCartModel: storeCartModel);
-
-
+    myLog(label: "done", value: "done");
+    // LocalStorage().writeUserCart(storeCartModel: storeCartModel);
 
     return Scaffold(
       body: SafeArea(
@@ -60,9 +63,11 @@ class _CartScreenState extends State<CartScreen> {
                   ? Center(child: Text("No Data"))
                   : ListView.builder(
                       padding: EdgeInsets.symmetric(vertical: 20),
-                      itemCount: storeCartModel.cartItem!.length+1 ?? 0,
+                      itemCount: storeCartModel.cartItem!.length + 1 ?? 0,
                       itemBuilder: (context, i) {
-                        return storeCartModel.cartItem!.length==i?_details():_item(i);
+                        return storeCartModel.cartItem!.length == i
+                            ? _details()
+                            : _item(i);
                       })),
           _orderButton()
         ],
@@ -70,7 +75,7 @@ class _CartScreenState extends State<CartScreen> {
     );
   }
 
-  Widget _orderButton(){
+  Widget _orderButton() {
     return Container(
       height: 70,
       width: double.infinity,
@@ -82,15 +87,28 @@ class _CartScreenState extends State<CartScreen> {
           Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Text("Total Pay Amount",style: CommonDecoration.headerDecoration.copyWith(color: Colors.white),),
-              Text("₹ ${storeCartModel.totalAmount+storeCartModel.deliveryCharge}",style: CommonDecoration.subHeaderDecoration.copyWith(color: Colors.white),)
+              Text(
+                "Total Pay Amount",
+                style: CommonDecoration.headerDecoration
+                    .copyWith(color: Colors.white),
+              ),
+              Text(
+                "₹ ${storeCartModel.totalAmount + storeCartModel.deliveryCharge}",
+                style: CommonDecoration.subHeaderDecoration
+                    .copyWith(color: Colors.white),
+              )
             ],
           ),
           InkWell(
-            onTap: (){
+            onTap: () {
+              if( storeCartModel.userModel?.name == null){
+                showMessage(msg: "Please Fill address First");
+                return;
+              }
               storeCartModel.dateTime = DateTime.now().toString();
               storeCartModel.confirm = "Pending";
-              storeCartModel.totalAmount = storeCartModel.totalAmount+storeCartModel.deliveryCharge;
+              storeCartModel.totalAmount =
+                  storeCartModel.totalAmount + storeCartModel.deliveryCharge;
 
               FirebaseRealTimeStorage().order(storeCartModel: storeCartModel);
             },
@@ -102,9 +120,11 @@ class _CartScreenState extends State<CartScreen> {
               decoration: BoxDecoration(
                   color: Colors.white,
                   borderRadius: BorderRadius.circular(100),
-                  boxShadow: greyShadow
+                  boxShadow: greyShadow),
+              child: Text(
+                "Place Order",
+                style: CommonDecoration.listItem.copyWith(color: Colors.blue),
               ),
-              child: Text("Place Order",style: CommonDecoration.listItem.copyWith(color: Colors.blue),),
             ),
           )
         ],
@@ -112,70 +132,145 @@ class _CartScreenState extends State<CartScreen> {
     );
   }
 
-  Widget _details(){
+  Widget _details() {
     return Column(
       children: [
         Container(
           margin: EdgeInsets.all(10),
           padding: EdgeInsets.all(10),
           color: Colors.white,
-          child:  Row(
+          child: Row(
             children: [
-              Icon(Icons.delivery_dining_rounded,size: 20,color: Colors.grey,),
-              SizedBox(width: 10,),
-              Text("Delivery Charges : ₹ ${storeCartModel.deliveryCharge??""}",style: CommonDecoration.productDescriptionDecoration,),
-            ],
-          ),
-        ),
-        Container(
-          margin: EdgeInsets.all(10),
-          padding: EdgeInsets.all(10),
-          color: Colors.white,
-          child: Column(
-            children: [
-              Row(
-                children: [
-                  Icon(Icons.person_outline,size: 20,color: Colors.grey,),
-                  SizedBox(width: 10,),
-                  Text("${storeCartModel.userModel?.name??""}".capitalize??"",style: CommonDecoration.productDescriptionDecoration,),
-                ],
+              Icon(
+                Icons.delivery_dining_rounded,
+                size: 20,
+                color: Colors.grey,
               ),
-              Row(
-                children: [
-                  Icon(Icons.phone,size: 20,color: Colors.grey,),
-                  SizedBox(width: 10,),
-
-                  Text("${storeCartModel.userModel?.number??""}".capitalize??"",style: CommonDecoration.productDescriptionDecoration,),
-                ],
+              SizedBox(
+                width: 10,
               ),
-              Row(
-                children: [
-                  Icon(Icons.email_outlined,size: 20,color: Colors.grey,),
-                  SizedBox(width: 10,),
-
-                  Text("${storeCartModel.userModel?.gmail??""}"??"",style: CommonDecoration.productDescriptionDecoration,),
-                ],
-              ),
-              Row(
-                children: [
-                  Icon(Icons.location_on,size: 20,color: Colors.grey,),
-                  SizedBox(width: 10,),
-
-                  Text("Address : ${storeCartModel.userModel?.location??""}"??"",style: CommonDecoration.productDescriptionDecoration,),
-                ],
+              Text(
+                "Delivery Charges : ₹ ${storeCartModel.deliveryCharge ?? ""}",
+                style: CommonDecoration.productDescriptionDecoration,
               ),
             ],
           ),
         ),
+        storeCartModel.userModel?.name == null
+            ? myPadding(
+                child: InkWell(
+                  onTap: (){
+                    Navigator.push(context, MaterialPageRoute(builder: (context)=>PersonalAccount())).then((value) {
+                      Timer(Duration(seconds: 1), () {
+                        storeCartModel.userModel = LocalStorage().readUserModel();
+                        setState(() {});
+                      });
+
+                    });
+                  },
+                    child: MyRoundButton(
+                        text: "Fill Address",
+                        bgColor: ColorConstants.themeColor)))
+            : Container(
+                margin: EdgeInsets.all(10),
+                padding: EdgeInsets.all(10),
+                color: Colors.white,
+                child: Column(
+                  children: [
+                    Row(
+                      children: [
+                        Icon(
+                          Icons.person_outline,
+                          size: 20,
+                          color: Colors.grey,
+                        ),
+                        SizedBox(
+                          width: 10,
+                        ),
+                        Text(
+                          "${storeCartModel.userModel?.name ?? ""}"
+                                  .capitalize ??
+                              "",
+                          style: CommonDecoration.productDescriptionDecoration,
+                        ),
+                      ],
+                    ),
+                    Row(
+                      children: [
+                        Icon(
+                          Icons.phone,
+                          size: 20,
+                          color: Colors.grey,
+                        ),
+                        SizedBox(
+                          width: 10,
+                        ),
+                        Text(
+                          "${storeCartModel.userModel?.number ?? ""}"
+                                  .capitalize ??
+                              "",
+                          style: CommonDecoration.productDescriptionDecoration,
+                        ),
+                      ],
+                    ),
+                    Row(
+                      children: [
+                        Icon(
+                          Icons.email_outlined,
+                          size: 20,
+                          color: Colors.grey,
+                        ),
+                        SizedBox(
+                          width: 10,
+                        ),
+                        Text(
+                          "${storeCartModel.userModel?.gmail ?? ""}" ?? "",
+                          style: CommonDecoration.productDescriptionDecoration,
+                        ),
+                      ],
+                    ),
+                    Row(
+                      children: [
+                        Icon(
+                          Icons.location_on,
+                          size: 20,
+                          color: Colors.grey,
+                        ),
+                        SizedBox(
+                          width: 10,
+                        ),
+                        Text(
+                          "Address : ${storeCartModel.userModel?.location ?? ""}" ??
+                              "",
+                          style: CommonDecoration.productDescriptionDecoration,
+                        ),
+                      ],
+                    ),
+                    smallSpace(),
+                    InkWell(
+                        onTap: (){
+                          Navigator.push(context, MaterialPageRoute(builder: (context)=>PersonalAccount())).then((value) {
+                            Timer(Duration(seconds: 1), () {
+                              storeCartModel.userModel = LocalStorage().readUserModel();
+                              setState(() {});
+                            });
+
+                          });
+                        },
+                        child: MyRoundButton(
+                            text: "Change Address",
+                            bgColor: ColorConstants.themeColor))
+                  ],
+                ),
+              ),
       ],
     );
   }
-  
-  Widget _item(i){
+
+  Widget _item(i) {
     return Container(
       padding: EdgeInsets.all(10),
-      margin:
-      EdgeInsets.only(bottom: 10, left: 10, right: 10),
+      margin: EdgeInsets.only(bottom: 10, left: 10, right: 10),
       decoration: BoxDecoration(
           color: Colors.white,
           //   boxShadow: greyShadow,
@@ -188,9 +283,7 @@ class _CartScreenState extends State<CartScreen> {
               child: ClipRRect(
                   borderRadius: BorderRadius.circular(10),
                   child: myImage(
-                      source: storeCartModel
-                          .cartItem![i].image ??
-                          "",
+                      source: storeCartModel.cartItem![i].image ?? "",
                       fromUrl: true))),
           SizedBox(
             width: 10,
@@ -204,22 +297,16 @@ class _CartScreenState extends State<CartScreen> {
               ),
               smallSpace(),
               Text(
-                "Grade : ${storeCartModel.cartItem![i].itemGrade}" ??
-                    "",
-                style: CommonDecoration
-                    .productDescriptionDecoration,
+                "Grade : ${storeCartModel.cartItem![i].itemGrade}" ?? "",
+                style: CommonDecoration.productDescriptionDecoration,
               ),
               Text(
-                "Price : ₹${storeCartModel.cartItem![i].itemPrice}" ??
-                    "",
-                style: CommonDecoration
-                    .productDescriptionDecoration,
+                "Price : ₹${storeCartModel.cartItem![i].itemPrice}" ?? "",
+                style: CommonDecoration.productDescriptionDecoration,
               ),
               Text(
-                "Quantity : ${storeCartModel.cartItem![i].itemQuantity}" ??
-                    "",
-                style: CommonDecoration
-                    .productDescriptionDecoration,
+                "Quantity : ${storeCartModel.cartItem![i].itemQuantity}" ?? "",
+                style: CommonDecoration.productDescriptionDecoration,
               ),
             ],
           ),
@@ -231,20 +318,16 @@ class _CartScreenState extends State<CartScreen> {
                 children: [
                   InkWell(
                       onTap: () {
-                        int temp = int.parse(storeCartModel
-                            .cartItem![i].itemCount ??
-                            "0");
+                        int temp = int.parse(
+                            storeCartModel.cartItem![i].itemCount ?? "0");
                         int tempPrice = int.parse(
-                            storeCartModel.cartItem![i]
-                                .itemPrice ??
-                                "0");
+                            storeCartModel.cartItem![i].itemPrice ?? "0");
                         temp++;
-                        storeCartModel.cartItem![i]
-                            .itemCount = temp.toString();
-                        storeCartModel
-                            .cartItem![i].itemTotal =
+                        storeCartModel.cartItem![i].itemCount = temp.toString();
+                        storeCartModel.cartItem![i].itemTotal =
                             (temp * tempPrice).toString();
-                        LocalStorage().writeUserCart(storeCartModel: storeCartModel);
+                        LocalStorage()
+                            .writeUserCart(storeCartModel: storeCartModel);
                         setState(() {});
                       },
                       child: addButton()),
@@ -254,11 +337,9 @@ class _CartScreenState extends State<CartScreen> {
                   SizedBox(
                     width: 20,
                     child: Text(
-                      "${storeCartModel.cartItem![i].itemCount}" ??
-                          "",
+                      "${storeCartModel.cartItem![i].itemCount}" ?? "",
                       textAlign: TextAlign.center,
-                      style: CommonDecoration
-                          .productDescriptionDecoration,
+                      style: CommonDecoration.productDescriptionDecoration,
                     ),
                   ),
                   SizedBox(
@@ -266,26 +347,21 @@ class _CartScreenState extends State<CartScreen> {
                   ),
                   InkWell(
                       onTap: () {
-                        int temp = int.parse(storeCartModel
-                            .cartItem![i].itemCount ??
-                            "0");
+                        int temp = int.parse(
+                            storeCartModel.cartItem![i].itemCount ?? "0");
                         if (temp == 1) {
-                          storeCartModel.cartItem!
-                              .removeAt(i);
+                          storeCartModel.cartItem!.removeAt(i);
                           setState(() {});
                           return;
                         }
                         int tempPrice = int.parse(
-                            storeCartModel.cartItem![i]
-                                .itemPrice ??
-                                "0");
+                            storeCartModel.cartItem![i].itemPrice ?? "0");
                         temp--;
-                        storeCartModel.cartItem![i]
-                            .itemCount = temp.toString();
-                        storeCartModel
-                            .cartItem![i].itemTotal =
+                        storeCartModel.cartItem![i].itemCount = temp.toString();
+                        storeCartModel.cartItem![i].itemTotal =
                             (temp * tempPrice).toString();
-                        LocalStorage().writeUserCart(storeCartModel: storeCartModel);
+                        LocalStorage()
+                            .writeUserCart(storeCartModel: storeCartModel);
                         setState(() {});
                       },
                       child: minusButton()),
@@ -293,8 +369,7 @@ class _CartScreenState extends State<CartScreen> {
               ),
               smallSpace(),
               Text(
-                "₹${storeCartModel.cartItem![i].itemTotal}" ??
-                    "",
+                "₹${storeCartModel.cartItem![i].itemTotal}" ?? "",
                 style: CommonDecoration.listItem,
               ),
               smallSpace(),
@@ -308,8 +383,7 @@ class _CartScreenState extends State<CartScreen> {
                     padding: EdgeInsets.all(5),
                     decoration: BoxDecoration(
                         color: Colors.grey.withOpacity(.2),
-                        borderRadius:
-                        BorderRadius.circular(10)),
+                        borderRadius: BorderRadius.circular(10)),
                     child: Icon(
                       Icons.delete_outline,
                       size: 18,

@@ -39,14 +39,13 @@ class MyDrawer extends StatelessWidget {
                 child: rowData(icons: Icons.list_alt, data: "Order Details")),
             InkWell(
                 onTap: ()async{
-                  Uri url  = Uri.parse("whatsapp://send?phone=" + "+918288814320" + "&text=" + "Hello sir");
-                  if (!await launchUrl(url)) {
-                  throw 'Could not launch';
-                  }
+                    Uri url  = Uri.parse("whatsapp://send?phone=" + "+918288814320" + "&text=" + "Hello sir");
+                    if (!await launchUrl(url)) {
+                    throw 'Could not launch';
+                    }
                 },
                 child: rowData(icons: Icons.whatsapp_rounded, data: "WhatsApp Contact")),
             rowData(icons: Icons.developer_board, data: "Developer Contact"),
-            rowData(icons: Icons.feedback_outlined, data: "Feedback"),
             InkWell(
                 onTap: (){
                   LocalStorage().clearData();
