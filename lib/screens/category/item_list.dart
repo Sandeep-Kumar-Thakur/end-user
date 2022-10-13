@@ -22,7 +22,6 @@ class ItemsScreen extends StatelessWidget {
           children: [
             commonHeader(title: "Product List"),
             Expanded(
-              child: myPadding(
                   child: SingleChildScrollView(
                     child:productList.length.isEqual(0)?Column(
                       mainAxisAlignment: MainAxisAlignment.center,
@@ -50,21 +49,26 @@ class ItemsScreen extends StatelessWidget {
                                     productDetailsModel: productList[index]));
                           },
                           child: Container(
-                              padding: EdgeInsets.all(13),
+                              padding: EdgeInsets.all(15),
+                              margin: EdgeInsets.all(2),
                               decoration: BoxDecoration(
-                                border:
-                                    Border.all(color: Colors.grey.withOpacity(.05)),
+                                  border:
+                                  Border.all(color: Colors.grey.withOpacity(.3)),
+                                  borderRadius: BorderRadius.circular(10)
                               ),
                               child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
+                                crossAxisAlignment: CrossAxisAlignment.center,
                                 children: [
                                   Expanded(
 
                                     child: Container(
-                                      margin: EdgeInsets.symmetric(horizontal: 15),
+                                      height: 100,
+                                      width: 100,
                                       decoration: BoxDecoration(
                                           boxShadow: greyShadow,
                                           borderRadius: BorderRadius.circular(100)),
+
+
                                       child: ClipRRect(
                                           borderRadius: BorderRadius.circular(100),
                                           child: myImage(
@@ -105,7 +109,7 @@ class ItemsScreen extends StatelessWidget {
                       },
                     ),
                   )),
-            ),
+
           ],
         ),
       ),

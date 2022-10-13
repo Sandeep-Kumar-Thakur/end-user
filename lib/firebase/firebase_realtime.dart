@@ -19,6 +19,15 @@ import 'package:http/http.dart' as http;
 class FirebaseRealTimeStorage {
   final fireBaseRealTime = FirebaseDatabase.instance;
 
+  ///----------hot items---------------------------
+  Future<BannerModel> getHotItems()async{
+
+    DataSnapshot dataSnapshot = await fireBaseRealTime.ref(KeyConstants.hotItems).get();
+    BannerModel bannerModel = BannerModel.fromJson(jsonDecode(jsonEncode(dataSnapshot.value)));
+
+    return bannerModel;
+  }
+
 
   ///----------- banner ------------------
   Future getAllBanner()async{

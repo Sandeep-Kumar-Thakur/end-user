@@ -18,7 +18,7 @@ class CommonDecoration{
   static const descriptionDecoration = TextStyle(
 
 
-      fontSize: 12,
+      fontSize: 11,
       color: Colors.grey,
       fontWeight: FontWeight.w400
   );
@@ -33,7 +33,7 @@ class CommonDecoration{
   static const listItem = TextStyle(
       color: ColorConstants.themeColor,
 
-      fontSize: 16,
+      fontSize: 15,
       fontWeight: FontWeight.w500
   );
 }

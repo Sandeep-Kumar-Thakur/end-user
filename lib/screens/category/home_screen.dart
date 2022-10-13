@@ -39,9 +39,12 @@ class _HomeScreenState extends State<HomeScreen>
  bool isSearch  =  false;
   List<BannerModel> bannerList = [];
 
+  BannerModel hotItems =BannerModel();
+
   @override
   void initState() {
    getBanner();
+   getHotItems();
     controller = AnimationController(
         duration: const Duration(milliseconds: 300), vsync: this);
     animation = Tween<double>(begin: 0.0, end: 1.0).animate(controller);
@@ -55,7 +58,19 @@ class _HomeScreenState extends State<HomeScreen>
 
   getBanner()async{
     bannerList =await FirebaseRealTimeStorage().getAllBanner();
+    setState(() {});
   }
+
+  getHotItems()async{
+    FirebaseRealTimeStorage().getHotItems().then((value){
+      hotItems = value;
+      setState(() {
+
+      });
+    });
+  }
+
+
 
   @override
   Widget build(BuildContext context) {
@@ -81,105 +96,196 @@ class _HomeScreenState extends State<HomeScreen>
   }
 
   Widget _home() {
-    return Obx(() {
-      if (UserController()
-          .stateController
-          .categoryList
-          .value
-          .length
-          .isEqual(0)) {
-        return Center(child: CircularProgressIndicator());
-      }
-
-      categoryList = UserController().stateController.categoryList.value
-      as List<CategoryModel>;
-      productListAll = [];
-      for (int i = 0; i < categoryList.length; i++) {
-        for (int j = 0; j < categoryList[i].productList!.length; j++) {
-          productListAll.add(categoryList[i].productList![j]);
-        }
-      }
-
-      return SingleChildScrollView(
-        child: Column(
-          children: [
-            SizedBox(height: 7,),
-            Container(
-              height: 140,
-              width: double.infinity,
-              child: CarouselSlider.builder(itemCount: bannerList.length, itemBuilder: (context,i,j){
-                return InkWell(
-                  onTap: (){
-                    goTo(className: ItemsScreen(productList: bannerList[i].productList!));
-                  },
-                  child: Container(
-                    width: double.infinity,
-                    child: myImage(source: bannerList[i].image??"", fromUrl: true),
+    return SingleChildScrollView(
+      child: Column(
+        children: [
+          SizedBox(height: 7,),
+          Container(
+            height: 140,
+            margin: EdgeInsets.symmetric(horizontal: 7),
+            width: double.infinity,
+            child: CarouselSlider.builder(itemCount: bannerList.length, itemBuilder: (context,i,j){
+              return InkWell(
+                onTap: (){
+                  goTo(className: ItemsScreen(productList: bannerList[i].productList!));
+                },
+                child: Container(
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(10)
                   ),
-                );
-              }, options: CarouselOptions(
+                  width: double.infinity,
+                  child: ClipRRect(
+                      borderRadius: BorderRadius.circular(10),
+                      child: myImage(source: bannerList[i].image??"", fromUrl: true)),
+                ),
+              );
+            }, options: CarouselOptions(
                 viewportFraction: 1,
                 autoPlay: true
-              )),
-            ),
-            SizedBox(height: 7,),
-            Text("Categories",style: CommonDecoration.subHeaderDecoration.copyWith(color: ColorConstants.themeColor),),
-            SizedBox(height: 4,),
-            GridView.builder(
-              padding: EdgeInsets.only(bottom: 10),
+            )),
+          ),
+          SizedBox(height: 7,),
+          Obx(() {
+            if (UserController()
+                .stateController
+                .categoryList
+                .value
+                .length
+                .isEqual(0)) {
+              return Center(child: CircularProgressIndicator());
+            }
+
+            categoryList = UserController().stateController.categoryList.value
+            as List<CategoryModel>;
+            productListAll = [];
+            for (int i = 0; i < categoryList.length; i++) {
+              for (int j = 0; j < categoryList[i].productList!.length; j++) {
+                productListAll.add(categoryList[i].productList![j]);
+              }
+            }
+
+            return Container(
+              margin: EdgeInsets.all(5),
+              padding: EdgeInsets.symmetric(vertical: 5),
+              decoration: BoxDecoration(
+                color: Colors.blue.withOpacity(.4),
+                borderRadius: BorderRadius.circular(10)
+              ),
+              child: Column(
+                children: [
+
+
+                  Text("Categories",style: CommonDecoration.subHeaderDecoration.copyWith(color: Colors.white,),),
+                  SizedBox(height: 4,),
+                  GridView.builder(
+                    padding: EdgeInsets.only(bottom: 10),
+                    shrinkWrap: true,
+                    physics: NeverScrollableScrollPhysics(),
+                    itemCount: categoryList.length,
+                    gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                      crossAxisCount: 3,
+                      mainAxisExtent: 150,
+                    ),
+                    itemBuilder: (BuildContext context, int index) {
+                      return InkWell(
+                        onTap: () {
+                          goTo(
+                              className: ItemsScreen(
+                                productList: categoryList[index].productList ?? [],
+                              ));
+                        },
+                        child: Container(
+                            padding: EdgeInsets.all(5),
+                            margin: EdgeInsets.all(5),
+                            decoration: BoxDecoration(
+                              color: Colors.white,
+                              boxShadow: greyShadow,
+                              borderRadius: BorderRadius.circular(10),
+                              border:
+                              Border.all(color: Colors.grey.withOpacity(.05)),
+                            ),
+                            child: Column(
+                              children: [
+                                Container(
+                                  width: 100,
+                                  height: 100,
+                                  decoration: BoxDecoration(
+                                     // boxShadow: greyShadow,
+                                      borderRadius: BorderRadius.circular(10)),
+                                  child: ClipRRect(
+                                      borderRadius: BorderRadius.circular(10),
+                                      child: myImage(
+                                          source: categoryList[index].image ?? "",
+                                          fromUrl: true)),
+                                ),
+                                Spacer(),
+                                Text(
+                                  categoryList[index].name?.capitalize ?? "",
+                                  style: CommonDecoration.descriptionDecoration.copyWith(color: ColorConstants.themeColor),
+                                )
+                              ],
+                            )),
+                      );
+                    },
+                  ),
+                ],
+              ),
+            );
+          }),
+          SizedBox(height: 7,),
+          Text("Hot Deals",style: CommonDecoration.subHeaderDecoration.copyWith(color: ColorConstants.themeColor),),
+           GridView.builder(
+              padding: EdgeInsets.symmetric(vertical: 10),
               shrinkWrap: true,
               physics: NeverScrollableScrollPhysics(),
-              itemCount: categoryList.length,
+              itemCount:hotItems.productList?.length??0,
               gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                crossAxisCount: 3,
-                mainAxisExtent: 150,
+                crossAxisCount: 2,
+                mainAxisExtent: 230,
               ),
               itemBuilder: (BuildContext context, int index) {
                 return InkWell(
                   onTap: () {
                     goTo(
-                        className: ItemsScreen(
-                          productList: categoryList[index].productList ?? [],
-                        ));
+                        className: ItemDetails(
+                            productDetailsModel: hotItems.productList![index]));
                   },
                   child: Container(
-                      padding: EdgeInsets.all(5),
-                      margin: EdgeInsets.all(5),
+                      padding: EdgeInsets.all(15),
+                      margin: EdgeInsets.all(2),
                       decoration: BoxDecoration(
-                        color: Colors.white,
-                        boxShadow: greyShadow,
-                        borderRadius: BorderRadius.circular(10),
                         border:
-                        Border.all(color: Colors.grey.withOpacity(.05)),
+                        Border.all(color: Colors.grey.withOpacity(.3)),
+                        borderRadius: BorderRadius.circular(10)
                       ),
                       child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.center,
                         children: [
                           Container(
+                           height: 100,
                             width: 100,
-                            height: 100,
                             decoration: BoxDecoration(
-                               // boxShadow: greyShadow,
-                                borderRadius: BorderRadius.circular(10)),
+                                boxShadow: greyShadow,
+                                borderRadius: BorderRadius.circular(100)),
                             child: ClipRRect(
-                                borderRadius: BorderRadius.circular(10),
+                                borderRadius: BorderRadius.circular(100),
                                 child: myImage(
-                                    source: categoryList[index].image ?? "",
+                                    source:
+                                    hotItems.productList![index].productImage ??
+                                        "",
                                     fromUrl: true)),
                           ),
-                          Spacer(),
                           Text(
-                            categoryList[index].name?.capitalize ?? "",
-                            style: CommonDecoration.descriptionDecoration.copyWith(color: ColorConstants.themeColor),
-                          )
+                            hotItems.productList![index].productName?.capitalize ?? "",
+                            style: CommonDecoration.listItem
+                                .copyWith(color: ColorConstants.themeColor),
+                            textAlign: TextAlign.center,
+                          ),
+                          SizedBox(
+                            height: 2,
+                          ),
+                          Text(
+                            "Grade : ${hotItems.productList![index].productGrade?.capitalize ?? ""}",
+                            style: CommonDecoration.descriptionDecoration,
+                            textAlign: TextAlign.center,
+                          ),
+                          SizedBox(
+                            height: 2,
+                          ),
+                          Text(
+                            "Price : ₹ ${hotItems.productList![index].quantityAndPrice?.last.price ?? ""} - ${hotItems.productList![index].quantityAndPrice?.last.quantity ?? ""}",
+                            style: CommonDecoration.listItem.copyWith(color:Colors.green),
+                            textAlign: TextAlign.start,
+                          ),
                         ],
                       )),
                 );
               },
             ),
-          ],
-        ),
-      );
-    });
+          
+        ],
+      ),
+    );
   }
 
   Widget _account() {

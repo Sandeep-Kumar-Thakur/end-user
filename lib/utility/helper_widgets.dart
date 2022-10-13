@@ -88,7 +88,7 @@ Widget commonHeader({required String title,bool? showDrawer,bool? showCart}) {
                           throw 'Could not launch';
                         }
                       },
-                      child: Icon(Icons.whatsapp,color: Colors.white,)),
+                      child: Icon(Icons.whatsapp,color: Colors.green  ,)),
                   SizedBox(width: 5,),
                   showCart==true?  InkWell(
                       onTap: () {
