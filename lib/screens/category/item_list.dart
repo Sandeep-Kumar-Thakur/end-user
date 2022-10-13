@@ -24,7 +24,16 @@ class ItemsScreen extends StatelessWidget {
             Expanded(
               child: myPadding(
                   child: SingleChildScrollView(
-                    child: GridView.builder(
+                    child:productList.length.isEqual(0)?Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Padding(
+                          padding: const EdgeInsets.all(40.0),
+                          child: Image.asset("assets/icons/research.png"),
+                        ),
+                        Text("Oops! Sorry No Data Found",style: CommonDecoration.headerDecoration,),
+                      ],
+                    ): GridView.builder(
                       padding: EdgeInsets.symmetric(vertical: 10),
                       shrinkWrap: true,
                       physics: NeverScrollableScrollPhysics(),

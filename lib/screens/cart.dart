@@ -28,6 +28,14 @@ class _CartScreenState extends State<CartScreen> {
     super.dispose();
   }
 
+  void checkCount(){
+    if(storeCartModel.cartItem!.length.isEqual(0)){
+      if(mounted){
+        hideLoader();
+      }
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     storeCartModel.totalAmount = 0;
@@ -40,8 +48,9 @@ class _CartScreenState extends State<CartScreen> {
           (int.parse(storeCartModel.cartItem![i].itemCount.toString()) * 6);
     }
 
-    myLog(label: "done", value: "done");
+    myLog(label: "done", value: "done ${storeCartModel.userModel?.name}");
     // LocalStorage().writeUserCart(storeCartModel: storeCartModel);
+
 
     return Scaffold(
       body: SafeArea(
@@ -250,8 +259,9 @@ class _CartScreenState extends State<CartScreen> {
                     InkWell(
                         onTap: (){
                           Navigator.push(context, MaterialPageRoute(builder: (context)=>PersonalAccount())).then((value) {
-                            Timer(Duration(seconds: 1), () {
+                            Timer(Duration(seconds: 2), () {
                               storeCartModel.userModel = LocalStorage().readUserModel();
+                              myLog(label: "get", value: storeCartModel.userModel!.name.toString());
                               setState(() {});
                             });
 
@@ -351,6 +361,8 @@ class _CartScreenState extends State<CartScreen> {
                             storeCartModel.cartItem![i].itemCount ?? "0");
                         if (temp == 1) {
                           storeCartModel.cartItem!.removeAt(i);
+                          LocalStorage().writeUserCart(storeCartModel: storeCartModel);
+                          checkCount();
                           setState(() {});
                           return;
                         }
@@ -377,6 +389,7 @@ class _CartScreenState extends State<CartScreen> {
                 onTap: () {
                   storeCartModel.cartItem!.removeAt(i);
                   LocalStorage().writeUserCart(storeCartModel: storeCartModel);
+                  checkCount();
                   setState(() {});
                 },
                 child: Container(

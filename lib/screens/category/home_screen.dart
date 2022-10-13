@@ -1,3 +1,4 @@
+import 'package:bala_ji_mart/constants/color_constants.dart';
 import 'package:bala_ji_mart/firebase/firebase_realtime.dart';
 import 'package:bala_ji_mart/local_Storage/local_storage.dart';
 import 'package:bala_ji_mart/screens/account/personal_information.dart';
@@ -102,6 +103,7 @@ class _HomeScreenState extends State<HomeScreen>
       return SingleChildScrollView(
         child: Column(
           children: [
+            SizedBox(height: 7,),
             Container(
               height: 140,
               width: double.infinity,
@@ -120,14 +122,17 @@ class _HomeScreenState extends State<HomeScreen>
                 autoPlay: true
               )),
             ),
+            SizedBox(height: 7,),
+            Text("Categories",style: CommonDecoration.subHeaderDecoration.copyWith(color: ColorConstants.themeColor),),
+            SizedBox(height: 4,),
             GridView.builder(
               padding: EdgeInsets.only(bottom: 10),
               shrinkWrap: true,
               physics: NeverScrollableScrollPhysics(),
               itemCount: categoryList.length,
               gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                crossAxisCount: 2,
-                mainAxisExtent: 210,
+                crossAxisCount: 3,
+                mainAxisExtent: 150,
               ),
               itemBuilder: (BuildContext context, int index) {
                 return InkWell(
@@ -138,31 +143,33 @@ class _HomeScreenState extends State<HomeScreen>
                         ));
                   },
                   child: Container(
-                      padding: EdgeInsets.all(15),
+                      padding: EdgeInsets.all(5),
+                      margin: EdgeInsets.all(5),
                       decoration: BoxDecoration(
+                        color: Colors.white,
+                        boxShadow: greyShadow,
+                        borderRadius: BorderRadius.circular(10),
                         border:
                         Border.all(color: Colors.grey.withOpacity(.05)),
                       ),
                       child: Column(
                         children: [
-                          Expanded(
-                            flex: 5,
-                            child: Container(
-                              width: double.infinity,
-                              decoration: BoxDecoration(
-                                  boxShadow: greyShadow,
-                                  borderRadius: BorderRadius.circular(100)),
-                              child: ClipRRect(
-                                  borderRadius: BorderRadius.circular(100),
-                                  child: myImage(
-                                      source: categoryList[index].image ?? "",
-                                      fromUrl: true)),
-                            ),
+                          Container(
+                            width: 100,
+                            height: 100,
+                            decoration: BoxDecoration(
+                               // boxShadow: greyShadow,
+                                borderRadius: BorderRadius.circular(10)),
+                            child: ClipRRect(
+                                borderRadius: BorderRadius.circular(10),
+                                child: myImage(
+                                    source: categoryList[index].image ?? "",
+                                    fromUrl: true)),
                           ),
-                          smallSpace(),
+                          Spacer(),
                           Text(
                             categoryList[index].name?.capitalize ?? "",
-                            style: CommonDecoration.listItem,
+                            style: CommonDecoration.descriptionDecoration.copyWith(color: ColorConstants.themeColor),
                           )
                         ],
                       )),

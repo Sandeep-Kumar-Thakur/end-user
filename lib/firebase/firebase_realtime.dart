@@ -1,6 +1,5 @@
 import 'dart:convert';
 import 'dart:developer';
-
 import 'package:bala_ji_mart/local_Storage/local_storage.dart';
 import 'package:bala_ji_mart/model/store_cart_model.dart';
 import 'package:bala_ji_mart/model/user_model.dart';
@@ -8,12 +7,12 @@ import 'package:bala_ji_mart/screens/category/home_screen.dart';
 import 'package:bala_ji_mart/screens/order_history.dart';
 import 'package:bala_ji_mart/utility/navigator_helper.dart';
 import 'package:firebase_database/firebase_database.dart';
-import 'package:get_storage/get_storage.dart';
 import '../constants/key_contants.dart';
 import '../controller/user_controller.dart';
 import '../model/banner_model.dart';
 import '../model/category_model.dart';
 import '../model/product_model.dart';
+import '../screens/order_successfull.dart';
 import '../utility/helper_widgets.dart';
 import 'package:http/http.dart' as http;
 
@@ -21,7 +20,7 @@ class FirebaseRealTimeStorage {
   final fireBaseRealTime = FirebaseDatabase.instance;
 
 
-  ///-----------banner ------------------
+  ///----------- banner ------------------
   Future getAllBanner()async{
     List<BannerModel> bannerList = [];
     var data = await fireBaseRealTime.ref(KeyConstants.banner).get();
@@ -84,7 +83,7 @@ class FirebaseRealTimeStorage {
         var date = new DateTime.fromMicrosecondsSinceEpoch(DateTime.parse(storeCartModel.dateTime!).millisecondsSinceEpoch*1000);
         myLog(label: "mytime", value: date.toString());
         hideLoader();
-        hideLoader();
+        goOff(className: OrderSuccessfulScreen());
         storeCartModel.cartItem = [];
         LocalStorage().writeUserCart(storeCartModel: storeCartModel);
         var data = await fireBaseRealTime.ref(KeyConstants.adminToken).get();
@@ -97,21 +96,20 @@ class FirebaseRealTimeStorage {
 
         var body = {
           "to": "${tempData.values.first}",
+          "priority":"high",
           "notification": {
             "title": "Order Received From ${storeCartModel.userModel?.name??""}",
             "body": "Amount   ₹ ${storeCartModel.totalAmount.toString()}",
-            "mutable_content": true,
+          //  "mutable_content": true,
             "sound": "Tri-tone"
           },
 
           "data": {
             "url": "<url of media image>",
             "dl": "<deeplink action on tap of notification>",
-            "notification_type":"12"
           }
         };
          http.post(uri,headers: header,body: jsonEncode(body));
-        showMessage(msg: "Order Placed");
       });
     }catch(e){
       showMessage(msg: e.toString());
@@ -211,7 +209,7 @@ class FirebaseRealTimeStorage {
       UserController().stateController.categoryList.value = categoryList;
 
       if (navigate != false) {
-        goTo(className: HomeScreen());
+        goOff(className: HomeScreen());
       }
     } catch (e) {
       UserController().stateController.categoryList.value = [];
