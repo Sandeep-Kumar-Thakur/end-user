@@ -16,4 +16,8 @@ class KeyConstants{
   static const pendingOrder = "Pending Order";
   static const confirmOrder = "Order Confirmed";
   static const cancelOrder = "Order Canceled";
+
+  static const companyName = "newzensoftwares";
+  static const companyEmail = "newzensoftwares@gmail.com";
+  static const whatsAppClient = "+919780000169";
 }

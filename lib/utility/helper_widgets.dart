@@ -7,9 +7,13 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:url_launcher/url_launcher.dart';
 
+import '../constants/key_contants.dart';
 import '../controller/user_controller.dart';
+import '../local_Storage/local_storage.dart';
 import '../screens/cart.dart';
+import '../screens/login/login_screen.dart';
 import 'common_decoration.dart';
+import 'my_button.dart';
 import 'navigator_helper.dart';
 
 Widget myPadding({required Widget child}) {
@@ -38,6 +42,28 @@ showMessage({required String msg}) {
   ));
 }
 
+openWhatsApp()async{
+  Uri url = Uri.parse("whatsapp://send?phone=" +
+      "${KeyConstants.whatsAppClient}" +
+      "&text=" +
+      "Hello Bala Ji");
+  if (!await launchUrl(url)) {
+  throw 'Could not launch';
+  }
+}
+
+sendMail() async {
+  // Android and iOS
+  const uri =
+      'mailto:${KeyConstants.companyEmail}?subject=Greetings&body=Hello';
+  if (await canLaunch(uri)) {
+    await launch(uri);
+  } else {
+    throw 'Could not launch $uri';
+  }
+}
+
+
 Widget commonHeader({required String title,bool? showDrawer,bool? showCart}) {
   return Obx(
     () {
@@ -65,7 +91,7 @@ Widget commonHeader({required String title,bool? showDrawer,bool? showCart}) {
               ),
             ),
             Expanded(
-              flex: 2,
+              flex: 3,
               child: Align(
                   alignment: Alignment.center,
                   child: Text(
@@ -82,11 +108,8 @@ Widget commonHeader({required String title,bool? showDrawer,bool? showCart}) {
                 mainAxisAlignment: MainAxisAlignment.end,
                 children: [
                   InkWell(
-                      onTap: ()async{
-                        Uri url  = Uri.parse("whatsapp://send?phone=" + "+918288814320" + "&text=" + "Hello sir");
-                        if (!await launchUrl(url)) {
-                          throw 'Could not launch';
-                        }
+                      onTap: (){
+                       openWhatsApp();
                       },
                       child: Icon(Icons.whatsapp,color: Colors.green  ,)),
                   SizedBox(width: 5,),
@@ -140,6 +163,58 @@ Widget commonHeader({required String title,bool? showDrawer,bool? showCart}) {
   );
 }
 
+logoutDialog(){
+  return  showDialog(context: UserController.navigatorKey.currentContext!, builder:(context)=>AlertDialog(
+    icon: Icon(Icons.power_settings_new,color: Colors.red,size: 40,),
+    content: Text("Do you really want to logout?",textAlign: TextAlign.center,),
+    actions: [
+      Row(
+        children: [
+          Expanded(child: InkWell(
+              onTap: (){
+                LocalStorage().clearData();
+                goOff(className: LoginScreen());
+              },
+              child: MyRoundButton(text: "Yes", bgColor: ColorConstants.themeColor))),
+          SizedBox(width: 10,),
+          Expanded(child: InkWell(
+              onTap: (){
+                hideLoader();
+              },
+              child: MyRoundButton(text: "No", bgColor: ColorConstants.themeColor))),
+        ],
+      )
+
+    ],
+  ));
+}
+
+exitDialog(){
+  return  showDialog(context: UserController.navigatorKey.currentContext!, builder:(context)=>AlertDialog(
+    icon: Icon(Icons.warning_amber_outlined,color: Colors.red,size: 60,),
+    content: Text("Do you really want to exit?",textAlign: TextAlign.center,),
+    actions: [
+      Row(
+        children: [
+          Expanded(child: InkWell(
+              onTap: (){
+               exit(0);
+              },
+              child: MyRoundButton(text: "Yes", bgColor: ColorConstants.themeColor))),
+          SizedBox(width: 10,),
+          Expanded(child: InkWell(
+              onTap: (){
+                hideLoader();
+              },
+              child: MyRoundButton(text: "No", bgColor: ColorConstants.themeColor))),
+        ],
+      )
+
+    ],
+  ));
+}
+
+
 List<BoxShadow> myShadow = [
   BoxShadow(
     color: Colors.blue.withOpacity(0.2),
@@ -177,7 +252,7 @@ Widget myImage({required String source, required bool fromUrl}) {
   return fromUrl
       ? FancyShimmerImage(
     imageUrl: source,
-    shimmerBaseColor: Colors.grey,
+    shimmerBaseColor: Colors.grey.withOpacity(.3),
     shimmerHighlightColor: Colors.white,
     // shimmerBackColor: dataDefault[i].shimmerBackColor,
     errorWidget: Image.network("https://upload.wikimedia.org/wikipedia/commons/thumb/d/d1/Image_not_available.png/640px-Image_not_available.png"),

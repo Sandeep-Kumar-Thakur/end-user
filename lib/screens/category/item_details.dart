@@ -133,91 +133,93 @@ class _ItemDetailsState extends State<ItemDetails> {
                       flex: 7,
                       child: Container(
                         width: double.infinity,
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            smallSpace(),
-                            Text(
-                              widget.productDetailsModel.productName!.capitalize ?? "",
-                              style: CommonDecoration.subHeaderDecoration,
-                            ),
-                            Text(
-                              "Price : ₹ ${widget.productDetailsModel.quantityAndPrice![selectedVariety].price} - ${widget.productDetailsModel.quantityAndPrice![selectedVariety].quantity}",
-                              style: CommonDecoration
-                                  .productDescriptionDecoration
-                                  .copyWith(color: Colors.green),
-                            ),
-                            greyLine(),
-                            Text(
-                              "Quantity : ",
-                              style: CommonDecoration
-                                  .productDescriptionDecoration
-                                  .copyWith(color: Colors.green),
-                            ),
-                            SizedBox(
-                              height: 4,
-                            ),
-                            Container(
-                                height: 40,
-                                child: ListView.builder(
-                                    scrollDirection: Axis.horizontal,
-                                    itemCount: widget.productDetailsModel
-                                            .quantityAndPrice?.length ??
-                                        0,
-                                    itemBuilder: (context, i) {
-                                      return InkWell(
-                                        onTap: () {
-                                          selectedVariety = i;
-                                          setState(() {});
-                                        },
-                                        child: Container(
-                                            padding: EdgeInsets.all(10),
-                                            alignment: Alignment.center,
-                                            margin: EdgeInsets.only(right: 10),
-                                            decoration: BoxDecoration(
-                                              border: Border.all(
-                                                color: selectedVariety != i
+                        child: SingleChildScrollView(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              smallSpace(),
+                              Text(
+                                widget.productDetailsModel.productName!.capitalize ?? "",
+                                style: CommonDecoration.subHeaderDecoration,
+                              ),
+                              Text(
+                                "Price : ₹ ${widget.productDetailsModel.quantityAndPrice![selectedVariety].price} - ${widget.productDetailsModel.quantityAndPrice![selectedVariety].quantity}",
+                                style: CommonDecoration
+                                    .productDescriptionDecoration
+                                    .copyWith(color: Colors.green),
+                              ),
+                              greyLine(),
+                              Text(
+                                "Quantity : ",
+                                style: CommonDecoration
+                                    .productDescriptionDecoration
+                                    .copyWith(color: Colors.green),
+                              ),
+                              SizedBox(
+                                height: 4,
+                              ),
+                              Container(
+                                  height: 40,
+                                  child: ListView.builder(
+                                      scrollDirection: Axis.horizontal,
+                                      itemCount: widget.productDetailsModel
+                                              .quantityAndPrice?.length ??
+                                          0,
+                                      itemBuilder: (context, i) {
+                                        return InkWell(
+                                          onTap: () {
+                                            selectedVariety = i;
+                                            setState(() {});
+                                          },
+                                          child: Container(
+                                              padding: EdgeInsets.all(10),
+                                              alignment: Alignment.center,
+                                              margin: EdgeInsets.only(right: 10),
+                                              decoration: BoxDecoration(
+                                                border: Border.all(
+                                                  color: selectedVariety != i
+                                                      ? ColorConstants.themeColor
+                                                      : Colors.white,
+                                                ),
+                                                borderRadius:
+                                                    BorderRadius.circular(10),
+                                                color: selectedVariety == i
                                                     ? ColorConstants.themeColor
                                                     : Colors.white,
                                               ),
-                                              borderRadius:
-                                                  BorderRadius.circular(10),
-                                              color: selectedVariety == i
-                                                  ? ColorConstants.themeColor
-                                                  : Colors.white,
-                                            ),
-                                            child: Text(
-                                              widget
-                                                      .productDetailsModel
-                                                      .quantityAndPrice![i]
-                                                      .quantity ??
-                                                  "",
-                                              style: CommonDecoration
-                                                  .descriptionDecoration
-                                                  .copyWith(
-                                                color: selectedVariety != i
-                                                    ? ColorConstants.themeColor
-                                                    : Colors.white,
-                                              ),
-                                            )),
-                                      );
-                                    })),
-                            greyLine(),
-                            smallSpace(),
-                            Text(
-                              "Grade : ${widget.productDetailsModel.productGrade}",
-                              style:
-                                  CommonDecoration.productDescriptionDecoration,
-                            ),
-                            Text(
-                              "Description : ${widget.productDetailsModel.productDescription}",
-                              style:
-                                  CommonDecoration.productDescriptionDecoration,
-                            ),
-                            greyLine(),
+                                              child: Text(
+                                                widget
+                                                        .productDetailsModel
+                                                        .quantityAndPrice![i]
+                                                        .quantity ??
+                                                    "",
+                                                style: CommonDecoration
+                                                    .descriptionDecoration
+                                                    .copyWith(
+                                                  color: selectedVariety != i
+                                                      ? ColorConstants.themeColor
+                                                      : Colors.white,
+                                                ),
+                                              )),
+                                        );
+                                      })),
+                              greyLine(),
+                              smallSpace(),
+                              Text(
+                                "Grade : ${widget.productDetailsModel.productGrade}",
+                                style:
+                                    CommonDecoration.productDescriptionDecoration,
+                              ),
+                              Text(
+                                "Description : ${widget.productDetailsModel.productDescription}",
+                                style:
+                                    CommonDecoration.productDescriptionDecoration,
+                              ),
+                              greyLine(),
 
-                            // Text("Slab : ",style: CommonDecoration.subHeaderDecoration,)
-                          ],
+                              // Text("Slab : ",style: CommonDecoration.subHeaderDecoration,)
+                            ],
+                          ),
                         ),
                       ))
                 ],

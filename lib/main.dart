@@ -7,6 +7,7 @@ import 'package:bala_ji_mart/screens/splash.dart';
 import 'package:bala_ji_mart/utility/navigator_helper.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
 
@@ -17,6 +18,14 @@ void main() async{
   await Firebase.initializeApp();
   PushNotificationService().setupInteractedMessage();
   await GetStorage.init();
+  SystemChrome.setPreferredOrientations([
+    DeviceOrientation.portraitUp,
+    DeviceOrientation.portraitDown,
+  ]);
+  SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
+    systemNavigationBarColor: ColorConstants.themeColor, // navigation bar color
+    statusBarColor:  ColorConstants.themeColor, // status bar color
+  ));
   runApp( MyApp());
 }
 
