@@ -54,12 +54,10 @@ openWhatsApp()async{
 
 sendMail() async {
   // Android and iOS
-  const uri =
-      'mailto:${KeyConstants.companyEmail}?subject=Greetings&body=Hello';
-  if (await canLaunch(uri)) {
-    await launch(uri);
-  } else {
-    throw 'Could not launch $uri';
+  Uri uri =
+      Uri.parse('mailto:${KeyConstants.companyEmail}?subject=Greetings&body=Hello Bala Ji');
+  if (!await launchUrl(uri)) {
+    throw 'Could not launch';
   }
 }
 
