@@ -1,4 +1,5 @@
 import 'dart:developer';
+import 'dart:io';
 
 import 'package:bala_ji_mart/constants/color_constants.dart';
 import 'package:bala_ji_mart/firebase/authentication_controller.dart';
@@ -27,38 +28,43 @@ class LoginScreen extends StatelessWidget {
     myLog(label: "user data", value: data.toJson().toString());
 
 
-    return Scaffold(
-      body: SafeArea(
-        child: myPadding(
-          child: Form(
-            key: _key,
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Padding(
-                  padding: EdgeInsets.symmetric(horizontal: 70),
-                  child: Hero(
-                      tag: "logo",
-                      child: Image.asset("assets/icons/balaji_new.png")),
-                ),
-                smallSpace(),
-                Text("Login",style: CommonDecoration.headerDecoration,),
-                largeSpace(),
-                MyTextFieldWithMobile(
-                    textEditController: numberController,
-                    filled: false,
-                    textInputType: TextInputType.number,
-                    label: "Mobile No.",
-                    validate: true),
-                largeSpace(),
-                InkWell(
-                    onTap: (){
-                      if(_key.currentState!.validate()){
-                       authenticationController.getOtp(phoneNumber: numberController.value.text);
-                      }
-                    },
-                    child: MyRoundButton(text: "Login", bgColor: ColorConstants.themeColor))
-              ],
+    return WillPopScope(
+      onWillPop: (){
+        exit(0);
+      },
+      child: Scaffold(
+        body: SafeArea(
+          child: myPadding(
+            child: Form(
+              key: _key,
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Padding(
+                    padding: EdgeInsets.symmetric(horizontal: 70),
+                    child: Hero(
+                        tag: "logo",
+                        child: Image.asset("assets/icons/balaji_new.png")),
+                  ),
+                  smallSpace(),
+                  Text("Login",style: CommonDecoration.headerDecoration,),
+                  largeSpace(),
+                  MyTextFieldWithMobile(
+                      textEditController: numberController,
+                      filled: false,
+                      textInputType: TextInputType.number,
+                      label: "Mobile No.",
+                      validate: true),
+                  largeSpace(),
+                  InkWell(
+                      onTap: (){
+                        if(_key.currentState!.validate()){
+                         authenticationController.getOtp(phoneNumber: numberController.value.text);
+                        }
+                      },
+                      child: MyRoundButton(text: "Login", bgColor: ColorConstants.themeColor))
+                ],
+              ),
             ),
           ),
         ),

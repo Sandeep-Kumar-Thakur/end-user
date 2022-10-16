@@ -171,7 +171,7 @@ logoutDialog(){
           Expanded(child: InkWell(
               onTap: (){
                 LocalStorage().clearData();
-                goOff(className: LoginScreen());
+                goOffAll(className: LoginScreen());
               },
               child: MyRoundButton(text: "Yes", bgColor: ColorConstants.themeColor))),
           SizedBox(width: 10,),
