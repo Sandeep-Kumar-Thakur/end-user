@@ -309,21 +309,21 @@ class _HomeScreenState extends State<HomeScreen>
             itemCount: hotItems.productList?.length == null
                 ? 0
                 : hotItems.productList!.length > 6
-                    ? 6
-                    : hotItems.productList?.length,
+                ? 6
+                : hotItems.productList?.length,
             gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
               crossAxisCount: 2,
-              mainAxisExtent: 230,
+              mainAxisExtent: 200,
             ),
             itemBuilder: (BuildContext context, int index) {
               return InkWell(
                 onTap: () {
                   goTo(
                       className: ItemDetails(
-                          productDetailsModel: hotItems.productList![index]));
+                        productDetailsModel: hotItems.productList![index],));
                 },
                 child: Container(
-                    padding: EdgeInsets.all(15),
+                    padding: EdgeInsets.all(10),
                     margin: EdgeInsets.all(2),
                     decoration: BoxDecoration(
                         border: Border.all(color: Colors.grey.withOpacity(.3)),
@@ -341,34 +341,55 @@ class _HomeScreenState extends State<HomeScreen>
                               borderRadius: BorderRadius.circular(100),
                               child: myImage(
                                   source: hotItems
-                                          .productList![index].productImage ??
+                                      .productList![index].productImage ??
                                       "",
                                   fromUrl: true)),
                         ),
+                        Spacer(),
                         Text(
-                          hotItems.productList![index].productName
-                                  ?.capitalize ??
-                              "",
-                          style: CommonDecoration.listItem
+                          "${hotItems.productList![index].productName
+                              ?.capitalize ??
+                              ""}, ${hotItems.productList![index].quantityAndPrice?.last.quantity ?? ""}",
+                          style: CommonDecoration.itemName
                               .copyWith(color: ColorConstants.themeColor),
                           textAlign: TextAlign.center,
                         ),
-                        SizedBox(
-                          height: 2,
-                        ),
-                        Text(
-                          "Grade : ${hotItems.productList![index].productGrade?.capitalize ?? ""}",
-                          style: CommonDecoration.descriptionDecoration,
-                          textAlign: TextAlign.center,
-                        ),
-                        SizedBox(
-                          height: 2,
-                        ),
-                        Text(
-                          "Price : ₹ ${hotItems.productList![index].quantityAndPrice?.last.price ?? ""} - ${hotItems.productList![index].quantityAndPrice?.last.quantity ?? ""}",
-                          style: CommonDecoration.listItem
-                              .copyWith(color: Colors.green),
-                          textAlign: TextAlign.start,
+                        Spacer(),
+                        if(hotItems.productList?[index].productGrade!="")
+                          Text(
+                            "Grade : ${hotItems.productList![index].productGrade?.capitalize ?? ""}",
+                            style: CommonDecoration.descriptionDecoration,
+                            textAlign: TextAlign.center,
+                          ),
+                        Spacer(),
+                        Row(
+                          children: [
+                            InkWell(
+                              onTap:(){
+                                addToCart(productDetailsModel: hotItems.productList![index]);
+                              },
+                              child: Container(
+                                  padding: EdgeInsets.all(5),
+                                  decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(5),
+                                    color: ColorConstants.themeColor,
+                                  ),
+                                  child: Row(
+                                    children: [
+                                      Text("Add To ",style: CommonDecoration.itemName.copyWith(color: Colors.white),),
+                                      Icon(Icons.shopping_cart_outlined,color: Colors.white,size: 20,)
+                                    ],
+                                  )
+                              ),
+                            ),
+                            Spacer(),
+                            Text(
+                              "₹ ${hotItems.productList![index].quantityAndPrice?.last.price ?? ""}",
+                              style: CommonDecoration.listItem
+                                  .copyWith(color: Colors.green),
+                              textAlign: TextAlign.start,
+                            ),
+                          ],
                         ),
                       ],
                     )),
@@ -425,6 +446,13 @@ class _HomeScreenState extends State<HomeScreen>
             },
             child:
                 _accountListItem(icon: Icons.power_settings_new, name: "Logout"),
+          ),
+          SizedBox(height: 10,),
+          InkWell(
+            onTap: () async {
+            },
+            child:
+            _accountListItem(icon: Icons.location_on_outlined, name: "SCF 169 grain market sector 26 Chandigarh"),
           ),
         ],
       ),
@@ -527,9 +555,11 @@ class _HomeScreenState extends State<HomeScreen>
               SizedBox(
                 width: 10,
               ),
-              Text(
-                name,
-                style: CommonDecoration.listItem,
+              Expanded(
+                child: Text(
+                  name,
+                  style: CommonDecoration.listItem,
+                ),
               )
             ],
           ),
@@ -639,7 +669,7 @@ class _HomeScreenState extends State<HomeScreen>
                                                 width: 10,
                                               ),
                                               Text(
-                                                "${model.productName} [${model.productGrade}]",
+                                                "${model.productName!.capitalize} ${model.productGrade!=""?"["+model.productGrade.toString()+"]":""}",
                                                 style: CommonDecoration
                                                     .descriptionDecoration
                                                     .copyWith(fontSize: 14),

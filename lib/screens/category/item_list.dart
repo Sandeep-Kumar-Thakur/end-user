@@ -39,69 +39,83 @@ class ItemsScreen extends StatelessWidget {
                       itemCount: productList.length,
                       gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                         crossAxisCount: 2,
-                        mainAxisExtent: 230,
+                        mainAxisExtent: 200,
                       ),
                       itemBuilder: (BuildContext context, int index) {
                         return InkWell(
                           onTap: () {
                             goTo(
                                 className: ItemDetails(
+
                                     productDetailsModel: productList[index]));
                           },
                           child: Container(
-                              padding: EdgeInsets.all(15),
+                              padding: EdgeInsets.all(10),
                               margin: EdgeInsets.all(2),
                               decoration: BoxDecoration(
-                                  border:
-                                  Border.all(color: Colors.grey.withOpacity(.3)),
-                                  borderRadius: BorderRadius.circular(10)
-                              ),
+                                  border: Border.all(color: Colors.grey.withOpacity(.3)),
+                                  borderRadius: BorderRadius.circular(10)),
                               child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.center,
                                 children: [
-                                  Expanded(
-
-                                    child: Container(
-                                      height: 100,
-                                      width: 100,
-                                      decoration: BoxDecoration(
-                                          boxShadow: greyShadow,
-                                          borderRadius: BorderRadius.circular(100)),
-
-
-                                      child: ClipRRect(
-                                          borderRadius: BorderRadius.circular(100),
-                                          child: myImage(
-                                              source:
-                                                  productList[index].productImage ??
-                                                      "",
-                                              fromUrl: true)),
-                                    ),
+                                  Container(
+                                    height: 100,
+                                    width: 100,
+                                    decoration: BoxDecoration(
+                                        boxShadow: greyShadow,
+                                        borderRadius: BorderRadius.circular(100)),
+                                    child: ClipRRect(
+                                        borderRadius: BorderRadius.circular(100),
+                                        child: myImage(
+                                            source: productList[index].productImage ??
+                                                "",
+                                            fromUrl: true)),
                                   ),
-                                  SizedBox(
-                                    height: 7,
-                                  ),
+                                  Spacer(),
                                   Text(
-                                    productList[index].productName?.capitalize ?? "",
-                                    style: CommonDecoration.listItem
+                                    "${productList[index].productName
+                                        ?.capitalize ??
+                                        ""}, ${productList[index].quantityAndPrice?.last.quantity ?? ""}",
+                                    style: CommonDecoration.itemName
                                         .copyWith(color: ColorConstants.themeColor),
                                     textAlign: TextAlign.center,
                                   ),
-                                  SizedBox(
-                                    height: 2,
-                                  ),
-                                  Text(
-                                    "Grade : ${productList[index].productGrade?.capitalize ?? ""}",
-                                    style: CommonDecoration.descriptionDecoration,
-                                    textAlign: TextAlign.center,
-                                  ),
-                                  SizedBox(
-                                    height: 2,
-                                  ),
-                                  Text(
-                                    "Price : ₹ ${productList[index].quantityAndPrice?.last.price ?? ""} - ${productList[index].quantityAndPrice?.last.quantity ?? ""}",
-                                    style: CommonDecoration.listItem.copyWith(color:Colors.green),
-                                    textAlign: TextAlign.start,
+                                  Spacer(),
+                                  if(productList[index].productGrade!="")
+                                    Text(
+                                      "Grade : ${productList[index].productGrade?.capitalize ?? ""}",
+                                      style: CommonDecoration.descriptionDecoration,
+                                      textAlign: TextAlign.center,
+                                    ),
+                                  Spacer(),
+                                  Row(
+                                    children: [
+                                      InkWell(
+                                        onTap:(){
+                                          addToCart(productDetailsModel: productList[index]);
+                                        },
+                                        child: Container(
+                                            padding: EdgeInsets.all(5),
+                                            decoration: BoxDecoration(
+                                              borderRadius: BorderRadius.circular(5),
+                                              color: ColorConstants.themeColor,
+                                            ),
+                                            child: Row(
+                                              children: [
+                                                Text("Add To ",style: CommonDecoration.itemName.copyWith(color: Colors.white),),
+                                                Icon(Icons.shopping_cart_outlined,color: Colors.white,size: 20,)
+                                              ],
+                                            )
+                                        ),
+                                      ),
+                                      Spacer(),
+                                      Text(
+                                        "₹ ${productList[index].quantityAndPrice?.last.price ?? ""}",
+                                        style: CommonDecoration.listItem
+                                            .copyWith(color: Colors.green),
+                                        textAlign: TextAlign.start,
+                                      ),
+                                    ],
                                   ),
                                 ],
                               )),
