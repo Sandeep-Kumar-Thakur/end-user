@@ -10,6 +10,9 @@ import 'package:url_launcher/url_launcher.dart';
 import '../constants/key_contants.dart';
 import '../controller/user_controller.dart';
 import '../local_Storage/local_storage.dart';
+import '../model/category_model.dart';
+import '../model/store_cart_model.dart';
+import '../model/user_model.dart';
 import '../screens/cart.dart';
 import '../screens/login/login_screen.dart';
 import 'common_decoration.dart';
@@ -23,6 +26,47 @@ Widget myPadding({required Widget child}) {
       child: child,
     ),
   );
+}
+
+void addToCart({required ProductDetailsModel productDetailsModel}) {
+  UserModel userModel = LocalStorage().readUserModel();
+  StoreCartModel model =
+  StoreCartModel(deliveryCharge: 0, totalAmount: 0, totalItem: 0);
+  model = LocalStorage().readUserCart();
+  model.userModel = userModel;
+  if (model.cartItem == null) {
+    model.cartItem = [];
+  }
+  model.userModel = userModel;
+  model.totalAmount = model.totalAmount +
+      int.parse(productDetailsModel.quantityAndPrice!.last.price!);
+  model.totalItem = model.totalItem + 1;
+  model.deliveryCharge = model.deliveryCharge + 6;
+  CartItem cartItem = CartItem(
+      itemCount: "1",
+      image:productDetailsModel.productImage,
+      itemGrade: productDetailsModel.productGrade,
+      itemName: productDetailsModel.productName,
+      itemPrice:
+      productDetailsModel.quantityAndPrice!.last.price,
+      itemQuantity: productDetailsModel.quantityAndPrice!.last.quantity,
+      itemTotal:productDetailsModel.quantityAndPrice!.last.price);
+  for (int i = 0; i < model.cartItem!.length; i++) {
+    if (model.cartItem![i].itemName == cartItem.itemName &&
+        model.cartItem![i].itemGrade == cartItem.itemGrade &&
+        model.cartItem![i].itemQuantity == cartItem.itemQuantity &&
+        model.cartItem![i].itemPrice == cartItem.itemPrice) {
+      model.cartItem![i].itemCount = (int.parse(model.cartItem![i].itemCount??"0")+1).toString();
+      model.cartItem![i].itemTotal = (int.parse(model.cartItem![i].itemTotal??"0")+int.parse(model.cartItem![i].itemPrice??"0")).toString();
+
+      showMessage(msg: "Increase Count");
+      LocalStorage().writeUserCart(storeCartModel: model);
+      return;
+    }
+  }
+  model.cartItem!.add(cartItem);
+  LocalStorage().writeUserCart(storeCartModel: model);
+  showMessage(msg: "Added To Cart");
 }
 
 myLog({required String label, required String value}) {
@@ -52,6 +96,13 @@ openWhatsApp()async{
   }
 }
 
+openDail()async{
+  Uri url = Uri.parse("tel:${KeyConstants.whatsAppClient}");
+  if (!await launchUrl(url)) {
+    throw 'Could not launch';
+  }
+}
+
 sendMail() async {
   // Android and iOS
   Uri uri =
@@ -77,14 +128,28 @@ Widget commonHeader({required String title,bool? showDrawer,bool? showCart}) {
               child: Align(
                 alignment: Alignment.centerLeft,
                 child: showDrawer==true?
-                InkWell(
-                  onTap: (){
-                    UserController.key.currentState!.openDrawer();
-                  },
-                  child: const Icon(
-                    Icons.menu,
-                    color: Colors.white,
-                  ),
+                Row(
+                  children: [
+                    InkWell(
+                      onTap: (){
+                        UserController.key.currentState!.openDrawer();
+                      },
+                      child: const Icon(
+                        Icons.menu,
+                        color: Colors.white,
+                      ),
+                    ),
+                    SizedBox(width: 5,),
+                    InkWell(
+                      onTap: (){
+                        openDail();
+                      },
+                      child: Padding(
+                        padding:  EdgeInsets.symmetric(horizontal: 5),
+                        child: Icon(Icons.phone,color: Colors.white,),
+                      ),
+                    )
+                  ],
                 ):SizedBox(),
               ),
             ),
@@ -98,7 +163,7 @@ Widget commonHeader({required String title,bool? showDrawer,bool? showCart}) {
                         .copyWith(color: Colors.white),
                   )),
             ),
-          Expanded(
+            Expanded(
             flex: 1,
             child: Align(
               alignment: Alignment.centerRight,

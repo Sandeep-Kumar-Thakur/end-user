@@ -1,7 +1,5 @@
 import 'package:bala_ji_mart/constants/color_constants.dart';
 import 'package:bala_ji_mart/controller/user_controller.dart';
-import 'package:bala_ji_mart/firebase/authentication_controller.dart';
-import 'package:bala_ji_mart/firebase/firebase_realtime.dart';
 import 'package:bala_ji_mart/screens/login/login_screen.dart';
 import 'package:bala_ji_mart/screens/splash.dart';
 import 'package:bala_ji_mart/utility/navigator_helper.dart';
@@ -26,7 +24,7 @@ void main() async{
     systemNavigationBarColor: ColorConstants.themeColor, // navigation bar color
     statusBarColor:  ColorConstants.themeColor, // status bar color
   ));
-  runApp( MyApp());
+  runApp(MyApp());
 }
 
 class MyApp extends StatelessWidget {
@@ -35,7 +33,7 @@ class MyApp extends StatelessWidget {
   // This widget is the root of your application.
   Map<int, Color> color =
   {
-    50:ColorConstants.themeColor.withOpacity(.1),
+    50: ColorConstants.themeColor.withOpacity(.1),
     100:ColorConstants.themeColor.withOpacity(.2),
     200:ColorConstants.themeColor.withOpacity(.3),
     300:ColorConstants.themeColor.withOpacity(.4),

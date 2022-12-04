@@ -62,13 +62,13 @@ class PersonalAccount extends StatelessWidget {
                           validate: true),
                       smallSpace(),
 
-                      MyTextFieldWithEmail(
-                          textEditController: gmailController,
-                          filled: false,
-                          textInputType: TextInputType.emailAddress,
-                          label: "Email",
-                          validate: true),
-                      smallSpace(),
+                      // MyTextFieldWithEmail(
+                      //     textEditController: gmailController,
+                      //     filled: false,
+                      //     textInputType: TextInputType.emailAddress,
+                      //     label: "Email",
+                      //     validate: true),
+                      // smallSpace(),
 
                       MyTextFieldWithMobile(
                           textEditController: altNumberController,
@@ -87,14 +87,14 @@ class PersonalAccount extends StatelessWidget {
                           validate: true),
                       smallSpace(),
 
-                  MyTextFieldWithPreFix(
-                      icon: Icons.person_pin_circle_outlined,
-                      textEditController: pinCodeController,
-                      filled: false,
-                      textInputType: TextInputType.number,
-                      label: "PinCode",
-                      validate: true),
-                  smallSpace(),
+                  // MyTextFieldWithPreFix(
+                  //     icon: Icons.person_pin_circle_outlined,
+                  //     textEditController: pinCodeController,
+                  //     filled: false,
+                  //     textInputType: TextInputType.number,
+                  //     label: "PinCode",
+                  //     validate: true),
+                  // smallSpace(),
 
                       MyTextFieldWithPreFix(
                         icon: Icons.location_city_sharp,

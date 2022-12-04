@@ -28,9 +28,9 @@ class _CartScreenState extends State<CartScreen> {
     super.dispose();
   }
 
-  void checkCount(){
-    if(storeCartModel.cartItem!.length.isEqual(0)){
-      if(mounted){
+  void checkCount() {
+    if (storeCartModel.cartItem!.length.isEqual(0)) {
+      if (mounted) {
         hideLoader();
       }
     }
@@ -44,13 +44,12 @@ class _CartScreenState extends State<CartScreen> {
     for (int i = 0; i < storeCartModel.cartItem!.length; i++) {
       storeCartModel.totalAmount = storeCartModel.totalAmount +
           int.parse(storeCartModel.cartItem![i].itemTotal.toString());
-      storeCartModel.deliveryCharge = storeCartModel.deliveryCharge +
-          (int.parse(storeCartModel.cartItem![i].itemCount.toString()) * 6);
+
+      ///----------------delivery charges ---------------------------
+
+      // storeCartModel.deliveryCharge = storeCartModel.deliveryCharge +
+      //     (int.parse(storeCartModel.cartItem![i].itemCount.toString()) * 6);
     }
-
-    myLog(label: "done", value: "done ${storeCartModel.userModel?.name}");
-    // LocalStorage().writeUserCart(storeCartModel: storeCartModel);
-
 
     return Scaffold(
       body: SafeArea(
@@ -78,7 +77,9 @@ class _CartScreenState extends State<CartScreen> {
                             ? _details()
                             : _item(i);
                       })),
-          _orderButton()
+          if (storeCartModel.totalAmount + storeCartModel.deliveryCharge >=
+              1000)
+            _orderButton()
         ],
       )),
     );
@@ -110,7 +111,7 @@ class _CartScreenState extends State<CartScreen> {
           ),
           InkWell(
             onTap: () {
-              if( storeCartModel.userModel?.name == null){
+              if (storeCartModel.userModel?.name == null) {
                 showMessage(msg: "Please Fill address First");
                 return;
               }
@@ -144,6 +145,162 @@ class _CartScreenState extends State<CartScreen> {
   Widget _details() {
     return Column(
       children: [
+
+        ExpansionTile(
+
+          title: Text(
+            "Personal Information",
+            style: CommonDecoration.itemName,
+          ),
+          children: [
+            storeCartModel.userModel?.name == null
+                ? myPadding(
+                    child: InkWell(
+                        onTap: () {
+                          Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) => PersonalAccount()))
+                              .then((value) {
+                            Timer(Duration(seconds: 1), () {
+                              storeCartModel.userModel =
+                                  LocalStorage().readUserModel();
+                              setState(() {});
+                            });
+                          });
+                        },
+                        child: MyRoundButton(
+                            text: "Fill Address",
+                            bgColor: ColorConstants.themeColor)))
+                : Container(
+                    margin: EdgeInsets.all(10),
+                    padding: EdgeInsets.all(10),
+                    color: Colors.white,
+                    child: Column(
+                      children: [
+                        Row(
+                          children: [
+                            Icon(
+                              Icons.person_outline,
+                              size: 15,
+                              color: Colors.grey,
+                            ),
+                            SizedBox(
+                              width: 10,
+                            ),
+                            Text(
+                              "${storeCartModel.userModel?.name ?? ""}"
+                                      .capitalize ??
+                                  "",
+                              style: CommonDecoration
+                                  .subProductDescriptionDecoration,
+                            ),
+                          ],
+                        ),
+                        Row(
+                          children: [
+                            Icon(
+                              Icons.phone,
+                              size: 15,
+                              color: Colors.grey,
+                            ),
+                            SizedBox(
+                              width: 10,
+                            ),
+                            Text(
+                              "${storeCartModel.userModel?.number ?? ""}"
+                                      .capitalize ??
+                                  "",
+                              style: CommonDecoration
+                                  .subProductDescriptionDecoration,
+                            ),
+                          ],
+                        ),
+                        Row(
+                          children: [
+                            Icon(
+                              Icons.email_outlined,
+                              size: 15,
+                              color: Colors.grey,
+                            ),
+                            SizedBox(
+                              width: 10,
+                            ),
+                            Text(
+                              "${storeCartModel.userModel?.gmail ?? ""}" ?? "",
+                              style: CommonDecoration
+                                  .subProductDescriptionDecoration,
+                            ),
+                          ],
+                        ),
+                        Row(
+                          children: [
+                            Icon(
+                              Icons.location_on,
+                              size: 15,
+                              color: Colors.grey,
+                            ),
+                            SizedBox(
+                              width: 10,
+                            ),
+                            Text(
+                              "${storeCartModel.userModel?.location ?? ""}" ??
+                                  "",
+                              style: CommonDecoration
+                                  .subProductDescriptionDecoration,
+                            ),
+                          ],
+                        ),
+                        smallSpace(),
+                        InkWell(
+                            onTap: () {
+                              Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) =>
+                                          PersonalAccount())).then((value) {
+                                Timer(Duration(seconds: 2), () {
+                                  storeCartModel.userModel =
+                                      LocalStorage().readUserModel();
+                                  myLog(
+                                      label: "get",
+                                      value: storeCartModel.userModel!.name
+                                          .toString());
+                                  setState(() {});
+                                });
+                              });
+                            },
+                            child: MyRoundButton(
+                                text: "Change Address",
+                                bgColor: ColorConstants.themeColor))
+                      ],
+                    ),
+                  ),
+          ],
+        ),
+        if (storeCartModel.totalAmount + storeCartModel.deliveryCharge < 1000)
+          Container(
+            margin: EdgeInsets.all(10),
+            padding: EdgeInsets.all(10),
+            color: Colors.white,
+            child: Row(
+              children: [
+                Icon(
+                  Icons.info_outline,
+                  size: 20,
+                  color: Colors.red,
+                ),
+                SizedBox(
+                  width: 10,
+                ),
+                Text(
+                  "Your must have a minimum order amount ₹ 1000.",
+                  // "Delivery Charges : ₹ ${storeCartModel.deliveryCharge ?? ""}",
+                  style: CommonDecoration.subProductDescriptionDecoration,
+                ),
+              ],
+            ),
+          ),
         Container(
           margin: EdgeInsets.all(10),
           padding: EdgeInsets.all(10),
@@ -151,128 +308,21 @@ class _CartScreenState extends State<CartScreen> {
           child: Row(
             children: [
               Icon(
-                Icons.delivery_dining_rounded,
+                Icons.watch_later_outlined,
                 size: 20,
-                color: Colors.grey,
+                color: ColorConstants.themeColor,
               ),
               SizedBox(
                 width: 10,
               ),
               Text(
-                "Delivery Charges : ₹ ${storeCartModel.deliveryCharge ?? ""}",
-                style: CommonDecoration.productDescriptionDecoration,
+                "Your Order delivered in 36 hours",
+                // "Delivery Charges : ₹ ${storeCartModel.deliveryCharge ?? ""}",
+                style: CommonDecoration.subProductDescriptionDecoration,
               ),
             ],
           ),
         ),
-        storeCartModel.userModel?.name == null
-            ? myPadding(
-                child: InkWell(
-                  onTap: (){
-                    Navigator.push(context, MaterialPageRoute(builder: (context)=>PersonalAccount())).then((value) {
-                      Timer(Duration(seconds: 1), () {
-                        storeCartModel.userModel = LocalStorage().readUserModel();
-                        setState(() {});
-                      });
-
-                    });
-                  },
-                    child: MyRoundButton(
-                        text: "Fill Address",
-                        bgColor: ColorConstants.themeColor)))
-            : Container(
-                margin: EdgeInsets.all(10),
-                padding: EdgeInsets.all(10),
-                color: Colors.white,
-                child: Column(
-                  children: [
-                    Row(
-                      children: [
-                        Icon(
-                          Icons.person_outline,
-                          size: 20,
-                          color: Colors.grey,
-                        ),
-                        SizedBox(
-                          width: 10,
-                        ),
-                        Text(
-                          "${storeCartModel.userModel?.name ?? ""}"
-                                  .capitalize ??
-                              "",
-                          style: CommonDecoration.productDescriptionDecoration,
-                        ),
-                      ],
-                    ),
-                    Row(
-                      children: [
-                        Icon(
-                          Icons.phone,
-                          size: 20,
-                          color: Colors.grey,
-                        ),
-                        SizedBox(
-                          width: 10,
-                        ),
-                        Text(
-                          "${storeCartModel.userModel?.number ?? ""}"
-                                  .capitalize ??
-                              "",
-                          style: CommonDecoration.productDescriptionDecoration,
-                        ),
-                      ],
-                    ),
-                    Row(
-                      children: [
-                        Icon(
-                          Icons.email_outlined,
-                          size: 20,
-                          color: Colors.grey,
-                        ),
-                        SizedBox(
-                          width: 10,
-                        ),
-                        Text(
-                          "${storeCartModel.userModel?.gmail ?? ""}" ?? "",
-                          style: CommonDecoration.productDescriptionDecoration,
-                        ),
-                      ],
-                    ),
-                    Row(
-                      children: [
-                        Icon(
-                          Icons.location_on,
-                          size: 20,
-                          color: Colors.grey,
-                        ),
-                        SizedBox(
-                          width: 10,
-                        ),
-                        Text(
-                          "Address : ${storeCartModel.userModel?.location ?? ""}" ??
-                              "",
-                          style: CommonDecoration.productDescriptionDecoration,
-                        ),
-                      ],
-                    ),
-                    smallSpace(),
-                    InkWell(
-                        onTap: (){
-                          Navigator.push(context, MaterialPageRoute(builder: (context)=>PersonalAccount())).then((value) {
-                            Timer(Duration(seconds: 2), () {
-                              storeCartModel.userModel = LocalStorage().readUserModel();
-                              myLog(label: "get", value: storeCartModel.userModel!.name.toString());
-                              setState(() {});
-                            });
-
-                          });
-                        },
-                        child: MyRoundButton(
-                            text: "Change Address",
-                            bgColor: ColorConstants.themeColor))
-                  ],
-                ),
-              ),
       ],
     );
   }
@@ -361,7 +411,8 @@ class _CartScreenState extends State<CartScreen> {
                             storeCartModel.cartItem![i].itemCount ?? "0");
                         if (temp == 1) {
                           storeCartModel.cartItem!.removeAt(i);
-                          LocalStorage().writeUserCart(storeCartModel: storeCartModel);
+                          LocalStorage()
+                              .writeUserCart(storeCartModel: storeCartModel);
                           checkCount();
                           setState(() {});
                           return;
