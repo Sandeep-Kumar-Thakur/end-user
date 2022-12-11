@@ -237,6 +237,8 @@ class _HomeScreenState extends State<HomeScreen>
                   ),
                   GridView.builder(
                     padding: EdgeInsets.only(bottom: 10),
+                    addRepaintBoundaries: false,
+                    addAutomaticKeepAlives: false,
                     shrinkWrap: true,
                     physics: NeverScrollableScrollPhysics(),
                     itemCount: categoryList.length,
@@ -306,6 +308,8 @@ class _HomeScreenState extends State<HomeScreen>
             padding: EdgeInsets.symmetric(vertical: 10),
             shrinkWrap: true,
             physics: NeverScrollableScrollPhysics(),
+            addRepaintBoundaries: false,
+            addAutomaticKeepAlives: false,
             itemCount: hotItems.productList?.length == null
                 ? 0
                 : hotItems.productList!.length > 6
@@ -320,6 +324,7 @@ class _HomeScreenState extends State<HomeScreen>
                 onTap: () {
                   goTo(
                       className: ItemDetails(
+                        productList:hotItems.productList!,
                         productDetailsModel: hotItems.productList![index],));
                 },
                 child: Container(
@@ -647,7 +652,7 @@ class _HomeScreenState extends State<HomeScreen>
                                           Navigator.pop(context);
                                           goTo(
                                               className: ItemDetails(
-                                                  productDetailsModel: model));
+                                                  productDetailsModel: model,productList:hotItems.productList!));
                                         },
                                         child: Container(
                                           margin: EdgeInsets.only(bottom: 10),

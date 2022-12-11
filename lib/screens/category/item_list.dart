@@ -37,6 +37,8 @@ class ItemsScreen extends StatelessWidget {
                       shrinkWrap: true,
                       physics: NeverScrollableScrollPhysics(),
                       itemCount: productList.length,
+                      addRepaintBoundaries: false,
+                      addAutomaticKeepAlives: false,
                       gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                         crossAxisCount: 2,
                         mainAxisExtent: 200,
@@ -46,7 +48,7 @@ class ItemsScreen extends StatelessWidget {
                           onTap: () {
                             goTo(
                                 className: ItemDetails(
-
+                                    productList:productList,
                                     productDetailsModel: productList[index]));
                           },
                           child: Container(
