@@ -62,13 +62,14 @@ class PersonalAccount extends StatelessWidget {
                           validate: true),
                       smallSpace(),
 
-                      // MyTextFieldWithEmail(
-                      //     textEditController: gmailController,
-                      //     filled: false,
-                      //     textInputType: TextInputType.emailAddress,
-                      //     label: "Email",
-                      //     validate: true),
-                      // smallSpace(),
+                  MyTextFieldWithPreFix(
+                    icon: Icons.confirmation_number_outlined,
+                          textEditController: gmailController,
+                          filled: false,
+                          textInputType: TextInputType.text,
+                          label: "GST NO.",
+                          validate: false),
+                      smallSpace(),
 
                       MyTextFieldWithMobile(
                           textEditController: altNumberController,

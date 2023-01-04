@@ -20,4 +20,7 @@ class KeyConstants{
   static const companyName = "newzensoftwares";
   static const companyEmail = "newzensoftwares@gmail.com";
   static const whatsAppClient = "+919780000169";
+
+  static const shopContact = "shopContact";
+
 }

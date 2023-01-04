@@ -2,6 +2,7 @@ import 'dart:developer';
 import 'dart:io';
 
 import 'package:bala_ji_mart/constants/color_constants.dart';
+import 'package:bala_ji_mart/firebase/firebase_realtime.dart';
 import 'package:fancy_shimmer_image/fancy_shimmer_image.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -87,8 +88,9 @@ showMessage({required String msg}) {
 }
 
 openWhatsApp()async{
+   String contact =await FirebaseRealTimeStorage().getContactNumber();
   Uri url = Uri.parse("whatsapp://send?phone=" +
-      "${KeyConstants.whatsAppClient}" +
+      "$contact" +
       "&text=" +
       "Hello Bala Ji");
   if (!await launchUrl(url)) {
@@ -97,7 +99,8 @@ openWhatsApp()async{
 }
 
 openDail()async{
-  Uri url = Uri.parse("tel:${KeyConstants.whatsAppClient}");
+  String contact =await FirebaseRealTimeStorage().getContactNumber();
+  Uri url = Uri.parse("tel:$contact");
   if (!await launchUrl(url)) {
     throw 'Could not launch';
   }
@@ -106,7 +109,7 @@ openDail()async{
 sendMail() async {
   // Android and iOS
   Uri uri =
-      Uri.parse('mailto:${KeyConstants.companyEmail}?subject=Greetings&body=Hello Bala Ji');
+      Uri.parse('mailto:${KeyConstants.companyEmail}?subject=Greetings&body=Hii Developers');
   if (!await launchUrl(uri)) {
     throw 'Could not launch';
   }

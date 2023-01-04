@@ -19,6 +19,14 @@ import 'package:http/http.dart' as http;
 class FirebaseRealTimeStorage {
   final fireBaseRealTime = FirebaseDatabase.instance;
 
+  Future<String> getContactNumber()async{
+    showLoader();
+     var response = await fireBaseRealTime.ref(KeyConstants.shopContact).get();
+     hideLoader();
+     myLog(label: "contact no", value: response.value.toString());
+     return response.value.toString();
+  }
+
   ///----------hot items---------------------------
   Future<BannerModel> getHotItems()async{
 
