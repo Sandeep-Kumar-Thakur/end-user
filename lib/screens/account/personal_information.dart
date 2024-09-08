@@ -53,10 +53,10 @@ class PersonalAccount extends StatelessWidget {
                           label: "Billing Name",
                           validate: true),
                       smallSpace(),
-                      MyTextFieldWithPreFix(
-                        icon: Icons.local_phone_outlined,
+                  MyTextFieldWithMobile(
+
                           textEditController: numberController,
-                          filled: true,
+                          filled: false,
                           textInputType: TextInputType.number,
                           label: "Contact No.",
                           validate: true),
@@ -74,7 +74,7 @@ class PersonalAccount extends StatelessWidget {
                       MyTextFieldWithMobile(
                           textEditController: altNumberController,
                           filled: false,
-                          textInputType: TextInputType.name,
+                          textInputType: TextInputType.number,
                           label: "Additional Number",
                           validate: true),
                       smallSpace(),
@@ -114,6 +114,7 @@ class PersonalAccount extends StatelessWidget {
                               userModel.altNumber = altNumberController.value.text;
                               userModel.location = locationController.value.text;
                               userModel.landmark = landMarkController.value.text;
+                              userModel.number = numberController.value.text;
                               FirebaseRealTimeStorage().updateUserDetails(userModel).then((value) {
                                   if(value){
                                     showMessage(msg: "Updated");

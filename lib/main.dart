@@ -49,9 +49,10 @@ class MyApp extends StatelessWidget {
     MaterialColor colorCustom = MaterialColor(0xFF04103b, color);
     return GetMaterialApp(
       debugShowCheckedModeBanner: false,
-      title: 'Flutter Demo',
+      title: 'Bala Ji Mart',
       navigatorKey: UserController.navigatorKey,
       theme: ThemeData(
+        useMaterial3: false,
         primarySwatch: colorCustom,
         bottomAppBarColor: colorCustom,
           fontFamily: "Poppins"

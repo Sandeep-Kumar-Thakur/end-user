@@ -70,6 +70,47 @@ void addToCart({required ProductDetailsModel productDetailsModel}) {
   showMessage(msg: "Added To Cart");
 }
 
+void addToCartFromIndex({required ProductDetailsModel productDetailsModel,required int index}) {
+  UserModel userModel = LocalStorage().readUserModel();
+  StoreCartModel model =
+  StoreCartModel(deliveryCharge: 0, totalAmount: 0, totalItem: 0);
+  model = LocalStorage().readUserCart();
+  model.userModel = userModel;
+  if (model.cartItem == null) {
+    model.cartItem = [];
+  }
+  model.userModel = userModel;
+  model.totalAmount = model.totalAmount +
+      int.parse(productDetailsModel.quantityAndPrice![index].price!);
+  model.totalItem = model.totalItem + 1;
+  model.deliveryCharge = model.deliveryCharge + 6;
+  CartItem cartItem = CartItem(
+      itemCount: "1",
+      image:productDetailsModel.productImage,
+      itemGrade: productDetailsModel.productGrade,
+      itemName: productDetailsModel.productName,
+      itemPrice:
+      productDetailsModel.quantityAndPrice![index].price,
+      itemQuantity: productDetailsModel.quantityAndPrice![index].quantity,
+      itemTotal:productDetailsModel.quantityAndPrice![index].price);
+  for (int i = 0; i < model.cartItem!.length; i++) {
+    if (model.cartItem![i].itemName == cartItem.itemName &&
+        model.cartItem![i].itemGrade == cartItem.itemGrade &&
+        model.cartItem![i].itemQuantity == cartItem.itemQuantity &&
+        model.cartItem![i].itemPrice == cartItem.itemPrice) {
+      model.cartItem![i].itemCount = (int.parse(model.cartItem![i].itemCount??"0")+1).toString();
+      model.cartItem![i].itemTotal = (int.parse(model.cartItem![i].itemTotal??"0")+int.parse(model.cartItem![i].itemPrice??"0")).toString();
+
+      showMessage(msg: "Increase Count");
+      LocalStorage().writeUserCart(storeCartModel: model);
+      return;
+    }
+  }
+  model.cartItem!.add(cartItem);
+  LocalStorage().writeUserCart(storeCartModel: model);
+  showMessage(msg: "Added To Cart");
+}
+
 myLog({required String label, required String value}) {
   log("$label------$value");
 }
@@ -177,7 +218,7 @@ Widget commonHeader({required String title,bool? showDrawer,bool? showCart}) {
                       onTap: (){
                        openWhatsApp();
                       },
-                      child: Icon(Icons.whatsapp,color: Colors.green  ,)),
+                      child: Icon(Icons.call,color: Colors.green  ,)),
                   SizedBox(width: 5,),
                   showCart==true?  InkWell(
                       onTap: () {

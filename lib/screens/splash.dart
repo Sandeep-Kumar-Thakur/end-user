@@ -34,7 +34,9 @@ class _SplashState extends State<Splash> {
     Timer(Duration(seconds: 3), () {
       UserModel userModel = data;
       if(userModel.uid==null){
-        goOff(className: LoginScreen());
+       // goOff(className: LoginScreen());
+        goOff(className: HomeScreen());
+
       }else{
         goOff(className: HomeScreen());
       }

@@ -5,6 +5,7 @@ import 'package:bala_ji_mart/model/store_cart_model.dart';
 import 'package:bala_ji_mart/screens/account/personal_information.dart';
 import 'package:bala_ji_mart/utility/helper_widgets.dart';
 import 'package:bala_ji_mart/utility/my_button.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -266,7 +267,10 @@ class _CartScreenState extends State<CartScreen> {
                                       label: "get",
                                       value: storeCartModel.userModel!.name
                                           .toString());
-                                  setState(() {});
+                                  if(mounted){
+                                    setState(() {});
+                                  }
+
                                 });
                               });
                             },
@@ -348,29 +352,33 @@ class _CartScreenState extends State<CartScreen> {
           SizedBox(
             width: 10,
           ),
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                storeCartModel.cartItem![i].itemName ?? "",
-                style: CommonDecoration.listItem,
-              ),
-              smallSpace(),
-              Text(
-                "Grade : ${storeCartModel.cartItem![i].itemGrade}" ?? "",
-                style: CommonDecoration.productDescriptionDecoration,
-              ),
-              Text(
-                "Price : ₹${storeCartModel.cartItem![i].itemPrice}" ?? "",
-                style: CommonDecoration.productDescriptionDecoration,
-              ),
-              Text(
-                "Quantity : ${storeCartModel.cartItem![i].itemQuantity}" ?? "",
-                style: CommonDecoration.productDescriptionDecoration,
-              ),
-            ],
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  storeCartModel.cartItem![i].itemName ?? "",
+                  style: CommonDecoration.listItem,
+                ),
+
+                Text(
+                  "Grade : ${storeCartModel.cartItem![i].itemGrade}" ?? "",
+                  style: CommonDecoration.productDescriptionDecoration,
+                ),
+                Text(
+                  "Price : ₹${storeCartModel.cartItem![i].itemPrice}" ?? "",
+                  style: CommonDecoration.productDescriptionDecoration,
+                ),
+                Text(
+                  "Quantity : ${storeCartModel.cartItem![i].itemQuantity}" ?? "",
+                  style: CommonDecoration.productDescriptionDecoration,
+                ),
+              ],
+            ),
           ),
-          Spacer(),
+          SizedBox(
+            width: 10,
+          ),
           Column(
             crossAxisAlignment: CrossAxisAlignment.end,
             children: [

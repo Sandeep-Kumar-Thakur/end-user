@@ -6,6 +6,7 @@ import 'package:bala_ji_mart/model/user_model.dart';
 import 'package:bala_ji_mart/screens/category/home_screen.dart';
 import 'package:bala_ji_mart/screens/order_history.dart';
 import 'package:bala_ji_mart/utility/navigator_helper.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
 import '../constants/key_contants.dart';
 import '../controller/user_controller.dart';
@@ -19,29 +20,29 @@ import 'package:http/http.dart' as http;
 class FirebaseRealTimeStorage {
   final fireBaseRealTime = FirebaseDatabase.instance;
 
-  Future<String> getContactNumber()async{
+  Future<String> getContactNumber() async {
     showLoader();
-     var response = await fireBaseRealTime.ref(KeyConstants.shopContact).get();
-     hideLoader();
-     myLog(label: "contact no", value: response.value.toString());
-     return response.value.toString();
+    var response = await fireBaseRealTime.ref(KeyConstants.shopContact).get();
+    hideLoader();
+    myLog(label: "contact no", value: response.value.toString());
+    return response.value.toString();
   }
 
   ///----------hot items---------------------------
-  Future<BannerModel> getHotItems()async{
-
-    DataSnapshot dataSnapshot = await fireBaseRealTime.ref(KeyConstants.hotItems).get();
-    BannerModel bannerModel = BannerModel.fromJson(jsonDecode(jsonEncode(dataSnapshot.value)));
+  Future<BannerModel> getHotItems() async {
+    DataSnapshot dataSnapshot =
+        await fireBaseRealTime.ref(KeyConstants.hotItems).get();
+    BannerModel bannerModel =
+        BannerModel.fromJson(jsonDecode(jsonEncode(dataSnapshot.value)));
 
     return bannerModel;
   }
 
-
   ///----------- banner ------------------
-  Future getAllBanner()async{
+  Future getAllBanner() async {
     List<BannerModel> bannerList = [];
     var data = await fireBaseRealTime.ref(KeyConstants.banner).get();
-    if(data.value==null){
+    if (data.value == null) {
       return [];
     }
     Map tempData = jsonDecode(jsonEncode(data.value));
@@ -49,7 +50,7 @@ class FirebaseRealTimeStorage {
       BannerModel bannerModel = BannerModel.fromJson(value);
       bannerList.add(bannerModel);
     });
-   return bannerList;
+    return bannerList;
   }
 
   ///-----------add cart-----------------------------
@@ -66,20 +67,23 @@ class FirebaseRealTimeStorage {
   Future getOrder() async {
     showLoader();
     UserModel userModel = LocalStorage().readUserModel();
-    try{
+    try {
       List<StoreCartModel> cartList = [];
-     var data =await fireBaseRealTime.ref(KeyConstants.orderReceived).child(userModel.uid??"").get();
-     Map tempData = jsonDecode(jsonEncode(data.value));
-     tempData.forEach((key, value) {
-       StoreCartModel storeCartModel =StoreCartModel.fromJson(value);
-       cartList.add(storeCartModel);
-     });
-     cartList.sort((a, b) {
-       return b.dateTime!.compareTo(a.dateTime!);
-     } );
-   hideLoader();
-   goTo(className: OrderHistory(cartList: cartList));
-    }catch(e){
+      var data = await fireBaseRealTime
+          .ref(KeyConstants.orderReceived)
+          .child(FirebaseAuth.instance.currentUser?.uid??"")
+          .get();
+      Map tempData = jsonDecode(jsonEncode(data.value));
+      tempData.forEach((key, value) {
+        StoreCartModel storeCartModel = StoreCartModel.fromJson(value);
+        cartList.add(storeCartModel);
+      });
+      cartList.sort((a, b) {
+        return b.dateTime!.compareTo(a.dateTime!);
+      });
+      hideLoader();
+      goTo(className: OrderHistory(cartList: cartList));
+    } catch (e) {
       hideLoader();
 
       showMessage(msg: "No Order History");
@@ -88,16 +92,18 @@ class FirebaseRealTimeStorage {
 
   Future order({required StoreCartModel storeCartModel}) async {
     showLoader();
-    try{
+    try {
       fireBaseRealTime
           .ref(KeyConstants.orderReceived)
-          .child(storeCartModel.userModel?.uid ?? "")
+          .child(FirebaseAuth.instance.currentUser?.uid??"")
           .child(DateTime.parse(storeCartModel.dateTime ?? "")
-          .millisecondsSinceEpoch
-          .toString())
+              .millisecondsSinceEpoch
+              .toString())
           .update(storeCartModel.toJson())
-          .then((value)async {
-        var date = new DateTime.fromMicrosecondsSinceEpoch(DateTime.parse(storeCartModel.dateTime!).millisecondsSinceEpoch*1000);
+          .then((value) async {
+        var date = new DateTime.fromMicrosecondsSinceEpoch(
+            DateTime.parse(storeCartModel.dateTime!).millisecondsSinceEpoch *
+                1000);
         myLog(label: "mytime", value: date.toString());
         hideLoader();
         goOff(className: OrderSuccessfulScreen());
@@ -107,28 +113,29 @@ class FirebaseRealTimeStorage {
         Map tempData = jsonDecode(jsonEncode(data.value));
         Uri uri = Uri.parse("https://fcm.googleapis.com/fcm/send");
         var header = {
-        "Content-Type":"application/json",
-        "Authorization":"key=AAAAWCdMLDs:APA91bHYSO-xZQMBS4d9aRQCgpLHd6QI6ebqr7AQqLDG338QniW_Uol_TL0WqjO5QdyQVOfDI9LGpFn1vTeWu4C5iO9qIOPGfnjsLnEONjEYfsAh_VNBZUIiBGUnCMhjF3VgiXlsrVDd"
+          "Content-Type": "application/json",
+          "Authorization":
+              "key=AAAAWCdMLDs:APA91bHYSO-xZQMBS4d9aRQCgpLHd6QI6ebqr7AQqLDG338QniW_Uol_TL0WqjO5QdyQVOfDI9LGpFn1vTeWu4C5iO9qIOPGfnjsLnEONjEYfsAh_VNBZUIiBGUnCMhjF3VgiXlsrVDd"
         };
 
         var body = {
           "to": "${tempData.values.first}",
-          "priority":"high",
+          "priority": "high",
           "notification": {
-            "title": "Order Received From ${storeCartModel.userModel?.name??""}",
+            "title":
+                "Order Received From ${storeCartModel.userModel?.name ?? ""}",
             "body": "Amount   ₹ ${storeCartModel.totalAmount.toString()}",
-          //  "mutable_content": true,
+            //  "mutable_content": true,
             "sound": "Tri-tone"
           },
-
           "data": {
             "url": "<url of media image>",
             "dl": "<deeplink action on tap of notification>",
           }
         };
-         http.post(uri,headers: header,body: jsonEncode(body));
+        http.post(uri, headers: header, body: jsonEncode(body));
       });
-    }catch(e){
+    } catch (e) {
       showMessage(msg: e.toString());
     }
   }
@@ -160,9 +167,22 @@ class FirebaseRealTimeStorage {
 
   Future updateUserDetails(UserModel userModel) async {
     showLoader();
+    if (FirebaseAuth.instance.currentUser == null) {
+      try{
+        await FirebaseAuth.instance.createUserWithEmailAndPassword(
+            email: '${userModel.number}@custom.com',
+            password: '${userModel.number}@custom.com');
+      }catch(e){
+        await FirebaseAuth.instance.signInWithEmailAndPassword(
+            email: '${userModel.number}@custom.com',
+            password: '${userModel.number}@custom.com');
+      }
+
+    }
+
     fireBaseRealTime
         .ref(KeyConstants.userDetails)
-        .child(userModel.uid ?? "")
+        .child(FirebaseAuth.instance.currentUser?.uid??"")
         .update(userModel.toJson())
         .then((value) async {
       var data = await fireBaseRealTime

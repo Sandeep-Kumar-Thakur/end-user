@@ -41,7 +41,7 @@ class ItemsScreen extends StatelessWidget {
                       addAutomaticKeepAlives: false,
                       gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                         crossAxisCount: 2,
-                        mainAxisExtent: 200,
+                        mainAxisExtent: 220,
                       ),
                       itemBuilder: (BuildContext context, int index) {
                         return InkWell(

@@ -1,3 +1,5 @@
+import 'dart:ui';
+
 import 'package:bala_ji_mart/constants/color_constants.dart';
 import 'package:bala_ji_mart/constants/key_contants.dart';
 import 'package:bala_ji_mart/firebase/firebase_realtime.dart';
@@ -46,7 +48,7 @@ class _HomeScreenState extends State<HomeScreen>
 
   BannerModel hotItems = BannerModel();
 
-  CarouselController carouselController = CarouselController();
+  CarouselSliderController carouselController = CarouselSliderController();
 
   int bannerCurrentPage = 0;
 
@@ -243,8 +245,8 @@ class _HomeScreenState extends State<HomeScreen>
                     physics: NeverScrollableScrollPhysics(),
                     itemCount: categoryList.length,
                     gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                      crossAxisCount: 3,
-                      mainAxisExtent: 150,
+                      crossAxisCount: 4,
+                      mainAxisExtent: 100,
                     ),
                     itemBuilder: (BuildContext context, int index) {
                       return InkWell(
@@ -259,7 +261,7 @@ class _HomeScreenState extends State<HomeScreen>
                             margin: EdgeInsets.all(5),
                             decoration: BoxDecoration(
                               color: Colors.white,
-                              boxShadow: greyShadow,
+                             boxShadow: greyShadow,
                               borderRadius: BorderRadius.circular(10),
                               border: Border.all(
                                   color: Colors.grey.withOpacity(.05)),
@@ -267,13 +269,13 @@ class _HomeScreenState extends State<HomeScreen>
                             child: Column(
                               children: [
                                 Container(
-                                  width: 100,
-                                  height: 100,
+                                  width: 60,
+                                  height: 60,
                                   decoration: BoxDecoration(
                                       // boxShadow: greyShadow,
-                                      borderRadius: BorderRadius.circular(10)),
+                                      borderRadius: BorderRadius.circular(70)),
                                   child: ClipRRect(
-                                      borderRadius: BorderRadius.circular(10),
+                                      borderRadius: BorderRadius.circular(70),
                                       child: myImage(
                                           source:
                                               categoryList[index].image ?? "",
@@ -282,9 +284,11 @@ class _HomeScreenState extends State<HomeScreen>
                                 Spacer(),
                                 Text(
                                   categoryList[index].name?.capitalize ?? "",
+                                  textAlign: TextAlign.center,
+                                  overflow: TextOverflow.ellipsis,
                                   style: CommonDecoration.descriptionDecoration
                                       .copyWith(
-                                          color: ColorConstants.themeColor),
+                                          color: ColorConstants.themeColor).copyWith(fontSize: 10),
                                 )
                               ],
                             )),
@@ -430,7 +434,7 @@ class _HomeScreenState extends State<HomeScreen>
             openWhatsApp();
             },
             child:
-                _accountListItem(icon: Icons.whatsapp_sharp, name: "Contact Us"),
+                _accountListItem(icon: Icons.call, name: "Contact Us"),
           ),
           InkWell(
             onTap: ()  {
@@ -751,6 +755,12 @@ class _HomeScreenState extends State<HomeScreen>
   @override
   Future<bool> didPushRouteInformation(RouteInformation routeInformation) {
     // TODO: implement didPushRouteInformation
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<AppExitResponse> didRequestAppExit() {
+    // TODO: implement didRequestAppExit
     throw UnimplementedError();
   }
 }

@@ -41,7 +41,7 @@ class MyDrawer extends StatelessWidget {
                 onTap: (){
                  openWhatsApp();
                 },
-                child: rowData(icons: Icons.whatsapp_rounded, data: "WhatsApp Contact")),
+                child: rowData(icons: Icons.call, data: "WhatsApp Contact")),
             InkWell(
                 onTap: (){
                   sendMail();

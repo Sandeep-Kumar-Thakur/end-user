@@ -250,7 +250,7 @@ class _ItemDetailsState extends State<ItemDetails> {
                       itemCount: screenProductList.length,
                       gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                         crossAxisCount: 2,
-                        mainAxisExtent: 200,
+                        mainAxisExtent: 220,
                       ),
                       itemBuilder: (BuildContext context, int index) {
                         return InkWell(
@@ -362,7 +362,7 @@ class _ItemDetailsState extends State<ItemDetails> {
                     )),
                 Expanded(
                     child: InkWell(
-                      onTap: () => addToCart(productDetailsModel: widget.productDetailsModel),
+                      onTap: () => addToCartFromIndex(productDetailsModel: widget.productDetailsModel, index: selectedVariety),
                       child: Container(
                         height: 50,
                         alignment: Alignment.center,
