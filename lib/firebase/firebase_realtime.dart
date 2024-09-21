@@ -187,7 +187,7 @@ class FirebaseRealTimeStorage {
         .then((value) async {
       var data = await fireBaseRealTime
           .ref(KeyConstants.userDetails)
-          .child(userModel.uid ?? "")
+          .child(FirebaseAuth.instance.currentUser?.uid??"")
           .get();
       UserModel myUserModel =
           UserModel.fromJson(jsonDecode(jsonEncode(data.value)));
